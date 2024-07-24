@@ -8,29 +8,25 @@ This repository will mostly utilize nodeJS (because we are raised by web develop
 ## Table of Contents
 - [Getting Started](#getting-started)
 - [Prerequisites](#prerequisites)
-- [Installation](#installation)
+- [Clone the Repo!](#clone-the-repo!)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [Support](#support)
 
 ## Getting Started
-To get started, clone this repository to your local machine and follow the instructions below to set up your environment.
+To get started, follow the instructions below to set up your environment.
 
 ## Prerequisites
 Make sure you have the following installed:
 - [Node.js](https://nodejs.org/) (version 14 or higher)
 - [npm](https://www.npmjs.com/) (Node Package Manager)
-- Access to the SafetyCulture API (API key or credentials)
+- Access to the SafetyCulture API (Bearer token for customer)
 
-## Installation
-1. Navigate to the path on your local machine and clone the repository:
+## Clone the Repo!
+Navigate to the desired path on your local machine and clone the repository:
    ```bash
    git clone https://github.com/roronoaBoi/sharingan.git
    ```
-2. Install the necessary dependencies:
-    ```bash
-    npm install
-    ```
 
 ## Usage
 Each script in this repository serves a specific purpose. Refer to the scripts README on how to use the script.
@@ -54,3 +50,8 @@ E(Push staged to branch:
 
 ## Support
 Email amer.cse@safetyculture.io if instructions are not clear or incorrect.
+
+"I'll give to you... this Sharingan of mine."
+<p align="center">
+<img src="sbin/s.gif" height="300" width="300">
+</p>
