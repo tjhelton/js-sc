@@ -13,7 +13,7 @@ const logger = winston.createLogger({
   }),
   ],
 });
-const token = process.env.ACCESS_TOKEN
+const token = process.argv[2]
 //fuunction that searches via email and sets user to inactive
 async function updateUsers(id,seatType,status){
   const userEndpoint = 'https://api.safetyculture.io/users/'
