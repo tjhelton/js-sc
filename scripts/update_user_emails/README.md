@@ -1,5 +1,5 @@
 # Update User Emails
-The purpose of this script is to update user emails with their SafetyCulture user IDs. As this script uses SafetyCulture's open API, these users will recieve email notifications to accept the updated email.
+The purpose of this script is to update user emails with their SafetyCulture user IDs. As this script uses SafetyCulture's open API, these users will recieve email notifications to accept the updated email. Additionally, users that are being updated by this endpoint must be set as active users.
 
 ## Set up:
 Ensure dependencies are installed by running the below command in the directory of the script:
@@ -16,7 +16,7 @@ etc.
 
 ## Running the script:
 Once the set up is complete, run the following command in a terminal:
-`node index.js <token>`
+`node index.mjs <token>`
 
 ## Outputs:
 none
