@@ -23,3 +23,5 @@ Once the script is complete, a log file entitled `user_updates.log` will be crea
 
 ## Notes for / from Ro:
 Error handling needs to be made more clear.
+
+Bad Requests will happen for users already in the groups. Ids will not be read where the search returns an empty field. In a future update, I will make sure this script does not process empty user searches.
