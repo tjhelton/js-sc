@@ -15,7 +15,7 @@ const logger = winston.createLogger({
 });
 const token = process.argv[2]
 //we use the search endpoint to get a user id with an email, then use the update endpoint for that id
-async function assignGroups(email,groupId){
+async function updateUsers(email,newEmail){
   const searchEndpoint = 'https://api.safetyculture.io/users/search';
   const searchOptions = {
     method: "POST",
@@ -26,17 +26,9 @@ async function assignGroups(email,groupId){
   },
     body: JSON.stringify({'email':[email]})
   };
-
-await fetch (searchEndpoint, searchOptions)
-.then(response => response.json())
-.then(data => {
-  if (data.users[0] === undefined) {
-    logger.log('info', `No user ID found for ${email}`)
-  } else {
-  const userId = data.users[0].id
-  const groupEndpoint = `https://api.safetyculture.io/groups/${groupId}/users/v2`
-  const groupOptions = {
-    method: 'POST',
+  const userEndpoint = 'https://api.safetyculture.io/users/'
+  const userOptions = {
+    method: 'PUT',
     headers: {
       accept: 'application/json',
       'sc-integration-id': 'sc-readme',
@@ -44,19 +36,26 @@ await fetch (searchEndpoint, searchOptions)
       'authorization': 'Bearer ' + token
     },
     body: JSON.stringify({
-      user_id: userId,
+      new_email: newEmail
     })
-  }
-  return fetch(groupEndpoint, groupOptions)
-  .then((response) => {
-    logger.log('info', email + " " + response.statusText)
-  })
-  .catch(error => {
-    logger.log('error', email + " " + error.message);
-  });
+  };
+await fetch (searchEndpoint, searchOptions)
+.then(response => response.json())
+.then(data => {
+  if (data.users[0] === undefined) {
+    logger.log('info', `No user ID found for ${email}...`)
+  } else {
+    const userId = data.users[0].id
+    const updatedUserEndpoint = userEndpoint + userId;
+    return fetch(updatedUserEndpoint, userOptions)
+    .then((response) => {
+      logger.log('info', email + " " + 'changed to ' + newEmail + ' ' + response.statusText)
+    })
+    .catch(error => {
+      logger.log('error', email + " " + error.message);
+    });
   }
 })
-
 };
 //Reads the appropriate CSV in the root of the script location.
 async function reader(csvName) {
@@ -68,5 +67,5 @@ async function reader(csvName) {
 const users = await reader('userUpdate.csv');
 
 for (const row of users) {
-  await assignGroups(row.user_email,row.group_id);
+  await updateUsers(row.email,row.new_email);
 };
