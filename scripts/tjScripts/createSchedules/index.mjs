@@ -21,8 +21,8 @@ const processCsv = async () => {
       // Process each row
       for (const row of results) {
         const description = row.description;
-        const mustComplete = row.mustComplete;
-        const canLateSubmit = row.canLateSubmit;
+        // const mustComplete = row.mustComplete; //OPTIONAL
+        // const canLateSubmit = row.canLateSubmit; //OPTIONAL
         const recurrence = row.recurrence;
         const startTimeHour = row.startTimeHour;
         const startTimeMinute = row.startTimeMinute;
@@ -30,9 +30,9 @@ const processCsv = async () => {
         const timezone = row.timezone;
         const fromDate = row.fromDate;
         const assigneeId = row.assigneeId;
-        const assigneeType = row.assigneeType;
+        // const assigneeType = row.assigneeType; //OPTIONAL
         const documentId = row.documentId;
-        const documentType = row.documentType;
+        // const documentType = row.documentType; //OPTIONAL
         const assetId = row.assetId;
         const locationId = row.locationId;
 

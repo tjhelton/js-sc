@@ -41,8 +41,9 @@ const processCsv = async () => {
           console.log(`Response for user ${userId}:`, responseText);
 
           if (response.ok) {
-            const data = responseText ? JSON.parse(responseText) : {}; // Parse only if responseText is not empty
             row.status = 'SUCCESS';
+            console.log(`SUCCESS For: ${userId}`);
+        
           } else {
             row.status = 'ERROR';
             console.error(`Error for user ${userId}: ${responseText}`);
