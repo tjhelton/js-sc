@@ -21,36 +21,36 @@ const processCsv = async () => {
       // Process each row
       for (const row of results) {
         const userId = row.userId;
-        const groupId = row.groupId;
 
         const options = {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             accept: 'application/json',
             'sc-integration-id': 'sc-readme',
             'content-type': 'application/json',
             authorization: `Bearer ${bToken}`,
           },
-          body: JSON.stringify({user_id: userId}),
+          body: JSON.stringify({ status: "inactive", seat_type: "full" }),
         };
 
         try {
-          const response = await fetch(`https://api.safetyculture.io/groups/${groupId}/users/v2`, options);
+          const response = await fetch(`https://api.safetyculture.io/users/${userId}`, options);
 
           // Log the full response for debugging
           const responseText = await response.text();
-          console.log(`Response for user ${userId}, ${groupId}:`, responseText);
+          console.log(`Response for user ${userId}:`, responseText);
 
           if (response.ok) {
-            const data = responseText ? JSON.parse(responseText) : {}; // Parse only if responseText is not empty
             row.status = 'SUCCESS';
+            console.log(`SUCCESS For: ${userId}`);
+        
           } else {
             row.status = 'ERROR';
-            console.error(`Error for user ${userId}, ${groupId}: ${responseText}`);
+            console.error(`Error for user ${userId}: ${responseText}`);
           }
         } catch (err) {
           row.status = 'ERROR';
-          console.error(`Network error for user ${userId}, ${groupId}:`, err);
+          console.error(`Network error for user ${userId}:`, err);
         }
       }
 
@@ -59,7 +59,6 @@ const processCsv = async () => {
         path: outputCsvPath,
         header: [
           { id: 'userId', title: 'userId' },
-          { id: 'groupId', title: 'groupId' },
           { id: 'status', title: 'status' },
         ],
       });
