@@ -39,6 +39,7 @@ A(Branch created:
 'git branch #name#)-->
 B(Make changes to
 branch)-->
+BA('npm run lint' to lint code!)-->
 C(Add files to commit:
 'git add .' to add all changes!)-- Once all
 files added -->
