@@ -39,8 +39,7 @@ const processCsv = async () => {
 
           // Log the full response for debugging
           const responseText = await response.text();
-          console.log(`Response for user ${userId}, ${groupId}:`, responseText);
-
+          
           if (response.ok) {
             row.status = 'SUCCESS';
             console.log(`SUCCESS For: ${userId}`);
