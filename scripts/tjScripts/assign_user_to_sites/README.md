@@ -1,6 +1,6 @@
-# User Deactivation Script
+# Assign Users To Sites In Bulk
 
-This script assigns users to sites based on user IDs + site IDs provided in an `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each site assignment.
+This script assigns users to sites based on user IDs + site IDs provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each site assignment.
 
 ## Overview
 
@@ -8,7 +8,7 @@ The script reads user IDs + site IDs from `input.csv`, sends a request to assign
 
 ## Prerequisites
 
-- Node.js (>= 14.x)
+- Node.js (>= 20.x)
 - Required npm packages:
   - `fs`
   - `csv-parser`
@@ -22,7 +22,7 @@ The script reads user IDs + site IDs from `input.csv`, sends a request to assign
 3. Install the required npm packages:
 
    ```bash
-   npm install fs csv-parser csv-writer node-fetch
+   npm i
 
 ## Configuration
 
@@ -36,10 +36,11 @@ The script reads user IDs + site IDs from `input.csv`, sends a request to assign
 
 1. Prepare an input.csv file with the following format:
     
-    ```bash
-    userId  siteId  status
-    12345   54321
-    67890   09876
+| userId | siteId |
+|--------|--------|
+| 12345  | 54321  |
+| 67890  | 09876  |
+
 
 2. Run the script:
 
@@ -48,9 +49,10 @@ The script reads user IDs + site IDs from `input.csv`, sends a request to assign
 
 3. Check the output.csv file for the status of each user ID:
 
-    ```bash
-     userId  siteId status
-    12345   54321   SUCCESS
-    67890   09876   ERROR
+| userId | siteId | status  |
+|--------|--------|---------|
+| 12345  | 54321  | SUCCESS |
+| 67890  | 09876  | ERROR   |
+
 
 
