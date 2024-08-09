@@ -67,28 +67,28 @@ const answerSetTwo = [
   'food court'
 ]
 
-const answerSetThree = [
-  'employee was doing their daily tasks',
-  'employee was playing on their phone',
-  'employee was eating in the food court',
-  'employee was watching a movie'
-]
+// const answerSetThree = [
+//   'employee was doing their daily tasks',
+//   'employee was playing on their phone',
+//   'employee was eating in the food court',
+//   'employee was watching a movie'
+// ]
 
-const answerSetFour = [
-  'this is where detail would go that would describe the situation up until the injury'
-]
+// const answerSetFour = [
+//   'this is where detail would go that would describe the situation up until the injury'
+// ]
 
-const answerSetFive = [
-  //nature of injury
-]
+// const answerSetFive = [
+//   //nature of injury
+// ]
 
-const answerSetSix = [
-  ////parts of the body were injured
-]
+// const answerSetSix = [
+//   ////parts of the body were injured
+// ]
 
-const answerSetSeven = [
-  //did employee see a doctor?
-]
+// const answerSetSeven = [
+//   //did employee see a doctor?
+// ]
 
 async function createInspections(iterations) {
     for (let i = 0; i < iterations; i++) {
