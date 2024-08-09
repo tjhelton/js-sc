@@ -18,7 +18,7 @@ To get started, follow the instructions below to set up your environment.
 
 ## Prerequisites
 Make sure you have the following installed:
-- [Node.js](https://nodejs.org/) (version 14 or higher)
+- [Node.js](https://nodejs.org/) (version 20 or higher)
 - [npm](https://www.npmjs.com/) (Node Package Manager)
 - Access to the SafetyCulture API (Bearer token for customer)
 
