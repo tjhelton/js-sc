@@ -1,11 +1,4 @@
-import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
-const csvWriter = createCsvWriter({
-    path: 'responses.csv',
-    header: [
-      {id: 'label', title: 'label'},
-      {id: 'id', title: 'id'}
-    ]
-});
+import { writeFileSync } from 'fs';
 
 const token = process.argv[2]
 const setId = process.argv[3]
@@ -32,6 +25,10 @@ async function getResponseSet (item) {
     }
 }
 
-const responseSet = await getResponseSet(setId)
+async function main(){
+  const responseSet = await getResponseSet(setId)
+  const outputArray = responseSet.map(item => item.id);
+  writeFileSync('grsids.json', JSON.stringify(outputArray, null, 2));
+}
 
-csvWriter.writeRecords(responseSet)
+main()
