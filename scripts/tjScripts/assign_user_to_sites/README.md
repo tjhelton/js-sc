@@ -8,7 +8,7 @@ The script reads user IDs + site IDs from `input.csv`, sends a request to assign
 
 ## Prerequisites
 
-- Node.js (>= 14.x)
+- Node.js (>= 20.x)
 - Required npm packages:
   - `fs`
   - `csv-parser`
