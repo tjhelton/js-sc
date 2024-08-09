@@ -9,7 +9,7 @@ npm i
 
 ## Running the script:
 Once the set up is complete, run the following command in a terminal:
-`node index.mjs <grs_id> <token>`
+`node index.mjs <token> <grs_id>`
 
 ## Outputs:
 Once the script is complete, a CSV file entitled `responses.csv` will be created.
