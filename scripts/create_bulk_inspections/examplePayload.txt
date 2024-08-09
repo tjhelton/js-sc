@@ -1,19 +1,27 @@
+Here is an example of what a pre-fill section might look like. This structure can be super minimallistic. type: list for response sets / grs, type: text for free text answers.
+Bear in mind limitations of pre-filling (can't pass a site or conducted_on... among other things, at POST)
+
     body: JSON.stringify({
     template_id: 'template_309035e949594773b814e11c6b4a8960',
-    items:
-   [
-       {
-         type: 'list',
-         responses: {selected: [{id: 'cfc400c9-9f3c-46a1-92f1-a563dd8c1adf'}]},
-         item_id: 'ab2f36d3-26f2-402e-b542-c11a705a7ba3'
-       },
-       {
-         type: 'text',
-         responses: {text: 'A color'},
-         item_id: 'fad585f9-7772-47d0-8490-600b019420ab'
-       }
-     ]
-   })
+            header_items:
+            [
+              {
+                responses: {time: randomTimestamp},
+                item_id: 'f3245d42-ea77-11e1-aff1-0800200c9a66'
+              }
+            ],
+            items:
+            [
+              {
+                type: 'list',
+                responses: {selected: [{id: 'cfc400c9-9f3c-46a1-92f1-a563dd8c1adf'}]},
+                item_id: 'ab2f36d3-26f2-402e-b542-c11a705a7ba3'
+              },
+              {
+                type: 'text',
+                responses: {text: 'A color'},
+                item_id: 'fad585f9-7772-47d0-8490-600b019420ab'
+              }
+            ]
+          })
 
-
-Note: This structure can be super minimallistic. type: list for response sets / grs, type: text for free text answers.
