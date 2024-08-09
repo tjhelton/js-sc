@@ -1,6 +1,6 @@
-# User Deactivation Script
+# Archive Inspections In Bulk
 
-This script archives inspections based on audit IDs provided in an `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each archive request.
+This script archives inspections based on audit IDs provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each archive request.
 
 ## Overview
 
@@ -8,7 +8,7 @@ The script reads audit IDs from `input.csv`, sends a request to archive each aud
 
 ## Prerequisites
 
-- Node.js (>= 14.x)
+- Node.js (>= 20.x)
 - Required npm packages:
   - `fs`
   - `csv-parser`
@@ -22,7 +22,7 @@ The script reads audit IDs from `input.csv`, sends a request to archive each aud
 3. Install the required npm packages:
 
    ```bash
-   npm install fs csv-parser csv-writer node-fetch
+   npm i
 
 ## Configuration
 
@@ -36,10 +36,10 @@ The script reads audit IDs from `input.csv`, sends a request to archive each aud
 
 1. Prepare an input.csv file with the following format:
     
-    ```bash
-    auditId  status
-    12345
-    67890
+| auditId |
+|--------|
+| 12345  |
+| 67890  |
 
 2. Run the script:
 
@@ -48,9 +48,9 @@ The script reads audit IDs from `input.csv`, sends a request to archive each aud
 
 3. Check the output.csv file for the status of each user ID:
 
-    ```bash
-    auditId,status
-    12345,SUCCESS
-    67890,ERROR
+| auditId | status |
+|--------|--------|
+| 12345  | SUCCESS |
+| 67890  | ERROR  |
 
 
