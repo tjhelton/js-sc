@@ -1,4 +1,4 @@
-# User Deactivation Script
+# Deactivate Users In Bulk
 
 This script deactivates users based on user IDs provided in an `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each deactivation request.
 
@@ -8,7 +8,7 @@ The script reads user IDs from `input.csv`, sends a request to deactivate each u
 
 ## Prerequisites
 
-- Node.js (>= 14.x)
+- Node.js (>= 20.x)
 - Required npm packages:
   - `fs`
   - `csv-parser`
@@ -22,7 +22,7 @@ The script reads user IDs from `input.csv`, sends a request to deactivate each u
 3. Install the required npm packages:
 
    ```bash
-   npm install fs csv-parser csv-writer node-fetch
+   npm i
 
 ## Configuration
 
@@ -36,10 +36,10 @@ The script reads user IDs from `input.csv`, sends a request to deactivate each u
 
 1. Prepare an input.csv file with the following format:
     
-    ```bash
-    userId
-    12345
-    67890
+| userId |
+|--------|
+| 12345  |
+| 67890  |
 
 2. Run the script:
 
@@ -48,9 +48,9 @@ The script reads user IDs from `input.csv`, sends a request to deactivate each u
 
 3. Check the output.csv file for the status of each user ID:
 
-    ```bash
-    userId,status
-    12345,SUCCESS
-    67890,ERROR
+| userId | status  |
+|--------|---------|
+| 12345  | SUCCESS |
+| 67890  | ERROR   |
 
 

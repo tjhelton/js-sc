@@ -1,10 +1,10 @@
-# Archive Inspections In Bulk
+# Delete Schedules In Bulk
 
-This script archives inspections based on audit IDs provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each archive request.
+This script deletes schedules based on schedule IDs provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each schedule deletion.
 
 ## Overview
 
-The script reads audit IDs from `input.csv`, sends a request to archive each audit via an API, and logs the results to `output.csv`.
+The script reads schedule IDs from `input.csv`, sends a request to delete each schedule via an API, and logs the results to `output.csv`.
 
 ## Prerequisites
 
@@ -36,7 +36,7 @@ The script reads audit IDs from `input.csv`, sends a request to archive each aud
 
 1. Prepare an input.csv file with the following format:
     
-| auditId |
+| scheduleId |
 |--------|
 | 12345  |
 | 67890  |
@@ -46,11 +46,11 @@ The script reads audit IDs from `input.csv`, sends a request to archive each aud
     ```bash
     node index.mjs
 
-3. Check the output.csv file for the status of each audit ID:
+3. Check the output.csv file for the status of each schedule ID:
 
-| auditId | status |
-|--------|--------|
+| scheduleId | status  |
+|--------|---------|
 | 12345  | SUCCESS |
-| 67890  | ERROR  |
+| 67890  | ERROR   |
 
 
