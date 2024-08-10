@@ -47,7 +47,7 @@ The script reads user IDs + site IDs from `input.csv`, sends a request to assign
     ```bash
     node index.mjs
 
-3. Check the output.csv file for the status of each user ID:
+3. Check the output.csv file for the status of each user ID + site ID:
 
 | userId | siteId | status  |
 |--------|--------|---------|

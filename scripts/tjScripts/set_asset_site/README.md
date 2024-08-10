@@ -1,14 +1,14 @@
-# User Deactivation Script
+# Set Asset Sites In Bulk
 
-This script re-assigns Asset site based on asset IDs and site IDs provided in an `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each site change request.
+This script sets Asset site based on asset IDs + site IDs provided in an `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each site assignment.
 
 ## Overview
 
-The script reads asset IDs and site IDs from `input.csv`, sends a request to switch each site via an API, and logs the results to `output.csv`.
+The script reads asset IDs + site IDs from `input.csv`, sends a request to assign each site via API, and logs the results to `output.csv`.
 
 ## Prerequisites
 
-- Node.js (>= 14.x)
+- Node.js (>= 20.x)
 - Required npm packages:
   - `fs`
   - `csv-parser`
@@ -22,7 +22,7 @@ The script reads asset IDs and site IDs from `input.csv`, sends a request to swi
 3. Install the required npm packages:
 
    ```bash
-   npm install fs csv-parser csv-writer node-fetch
+   npm i
 
 ## Configuration
 
@@ -36,21 +36,21 @@ The script reads asset IDs and site IDs from `input.csv`, sends a request to swi
 
 1. Prepare an input.csv file with the following format:
     
-    ```bash
-    assetId siteId status
-    12345   54321
-    67890   09876
+| assetId | siteId |
+|--------|--------|
+| 12345  | 54321  |
+| 67890  | 09876  |
 
 2. Run the script:
 
     ```bash
     node index.mjs
 
-3. Check the output.csv file for the status of each user ID:
+3. Check the output.csv file for the status of each asset ID + site ID:
 
-    ```bash
-   assetId siteId   status
-    12345   54321   SUCCESS
-    67890   09876   ERROR
+| assetId | siteId | status  |
+|--------|--------|---------|
+| 12345  | 54321  | SUCCESS |
+| 67890  | 09876  | ERROR   |
 
 

@@ -46,7 +46,7 @@ The script reads user IDs + group IDs from `input.csv`, sends a request to add e
     ```bash
     node index.mjs
 
-3. Check the output.csv file for the status of each user ID:
+3. Check the output.csv file for the status of each user ID + group ID:
 
 | userId | groupId | status  |
 |--------|--------|---------|

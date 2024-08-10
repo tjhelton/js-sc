@@ -1,10 +1,10 @@
-# Archive Inspections In Bulk
+# Remove User From All Groups In Bulk
 
-This script archives inspections based on audit IDs provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each archive request.
+This script removes users provided in the `input.csv` file from all groups of which they may be a member. The results are saved in an `output.csv` file, indicating the status of each user/group removal.
 
 ## Overview
 
-The script reads audit IDs from `input.csv`, sends a request to archive each audit via an API, and logs the results to `output.csv`.
+The script reads user IDs from `input.csv`, retrieves all groups associated with each user, removes the user from those groups via API, and logs the results in `output.csv`.
 
 ## Prerequisites
 
@@ -36,7 +36,7 @@ The script reads audit IDs from `input.csv`, sends a request to archive each aud
 
 1. Prepare an input.csv file with the following format:
     
-| auditId |
+| userId |
 |--------|
 | 12345  |
 | 67890  |
@@ -46,11 +46,11 @@ The script reads audit IDs from `input.csv`, sends a request to archive each aud
     ```bash
     node index.mjs
 
-3. Check the output.csv file for the status of each audit ID:
+3. Check the output.csv file for the status of each user ID:
 
-| auditId | status |
-|--------|--------|
+| userId | status  |
+|--------|---------|
 | 12345  | SUCCESS |
-| 67890  | ERROR  |
+| 67890  | ERROR   |
 
 
