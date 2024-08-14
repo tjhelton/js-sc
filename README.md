@@ -49,6 +49,8 @@ E(Push staged to branch:
 'git push origin #branch_name#');
 ```
 
+<3
+
 ## Support
 Email amer.cse@safetyculture.io if instructions are not clear or incorrect.
 
