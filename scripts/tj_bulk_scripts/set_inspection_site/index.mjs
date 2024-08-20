@@ -1,7 +1,6 @@
 import fs from 'fs';
 import csv from 'csv-parser';
 import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
-import fetch from 'node-fetch';
 
 const bToken = 'TOKEN_HERE';
 

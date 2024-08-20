@@ -1,5 +1,4 @@
 import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
-import fetch from 'node-fetch';
 
 const bToken = 'TOKEN_HERE';
 const baseUrl = 'https://api.safetyculture.io';
