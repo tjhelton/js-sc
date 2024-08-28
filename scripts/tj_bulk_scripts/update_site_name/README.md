@@ -2,10 +2,6 @@
 
 This script updates site name based on site IDs + newNames provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each site name update.
 
-## Overview
-
-The script reads site IDs + newNames from `input.csv`, sends a request to update each site name via API, and logs the results to `output.csv`.
-
 ## Prerequisites
 
 - Node.js (>= 20.x)
@@ -13,7 +9,6 @@ The script reads site IDs + newNames from `input.csv`, sends a request to update
   - `fs`
   - `csv-parser`
   - `csv-writer`
-  - `node-fetch`
 
 ## Installation
 

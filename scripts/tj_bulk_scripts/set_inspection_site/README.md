@@ -2,10 +2,6 @@
 
 This script sets inspection sites based on audit IDs + site IDs provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each site assignment.
 
-## Overview
-
-The script reads audit IDs + site IDs from `input.csv`, sends a request to assign a site to each inspection via API, and logs the results to `output.csv`.
-
 ## Prerequisites
 
 - Node.js (>= 20.x)
@@ -13,7 +9,6 @@ The script reads audit IDs + site IDs from `input.csv`, sends a request to assig
   - `fs`
   - `csv-parser`
   - `csv-writer`
-  - `node-fetch`
 
 ## Installation
 

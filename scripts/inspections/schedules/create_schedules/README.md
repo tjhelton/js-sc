@@ -2,10 +2,6 @@
 
 This script creates schedules based on parameters provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each schedule creation.
 
-## Overview
-
-The script reads schedule parameters from `input.csv`, sends a request to create each schedule via API, and logs the results to `output.csv`.
-
 ## Prerequisites
 
 - Node.js (>= 20.x)
@@ -13,7 +9,6 @@ The script reads schedule parameters from `input.csv`, sends a request to create
   - `fs`
   - `csv-parser`
   - `csv-writer`
-  - `node-fetch`
 
 ## Installation
 

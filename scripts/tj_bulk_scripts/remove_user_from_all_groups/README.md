@@ -2,10 +2,6 @@
 
 This script removes users provided in the `input.csv` file from all groups of which they may be a member. The results are saved in an `output.csv` file, indicating the status of each user/group removal.
 
-## Overview
-
-The script reads user IDs from `input.csv`, retrieves all groups associated with each user, removes the user from those groups via API, and logs the results in `output.csv`.
-
 ## Prerequisites
 
 - Node.js (>= 20.x)
@@ -13,7 +9,6 @@ The script reads user IDs from `input.csv`, retrieves all groups associated with
   - `fs`
   - `csv-parser`
   - `csv-writer`
-  - `node-fetch`
 
 ## Installation
 

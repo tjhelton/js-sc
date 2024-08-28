@@ -2,10 +2,6 @@
 
 This script deletes schedules based on schedule IDs provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each schedule deletion.
 
-## Overview
-
-The script reads schedule IDs from `input.csv`, sends a request to delete each schedule via an API, and logs the results to `output.csv`.
-
 ## Prerequisites
 
 - Node.js (>= 20.x)
@@ -13,7 +9,6 @@ The script reads schedule IDs from `input.csv`, sends a request to delete each s
   - `fs`
   - `csv-parser`
   - `csv-writer`
-  - `node-fetch`
 
 ## Installation
 
