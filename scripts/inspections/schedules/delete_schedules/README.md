@@ -41,7 +41,7 @@ This script deletes schedules based on schedule IDs provided in the `input.csv` 
     ```bash
     node index.mjs
 
-3. Check the output.csv file for the status of each schedule ID:
+3. Check the output.csv file for the status of each schedule deletion:
 
 | scheduleId | status  |
 |--------|---------|

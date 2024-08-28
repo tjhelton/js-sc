@@ -32,7 +32,7 @@ This script deletes all schedules that exist in the SC environment. There is no 
     ```bash
     node index.mjs
 
-2. Check the output.csv file for the status of each site ID + newName:
+2. Check the output.csv file for the status of each schedule deletion:
 
 | scheduleId | status |
 |--------|--------|

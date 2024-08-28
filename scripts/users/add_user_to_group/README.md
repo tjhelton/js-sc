@@ -2,10 +2,6 @@
 
 This script adds users to a group based on user IDs + group IDs provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each group addition.
 
-## Overview
-
-The script reads user IDs + group IDs from `input.csv`, sends a request to add each user to each group via API, and logs the results to `output.csv`.
-
 ## Prerequisites
 
 - Node.js (>= 20.x)
@@ -13,7 +9,6 @@ The script reads user IDs + group IDs from `input.csv`, sends a request to add e
   - `fs`
   - `csv-parser`
   - `csv-writer`
-  - `node-fetch`
 
 ## Installation
 
