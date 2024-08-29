@@ -2,10 +2,6 @@
 
 This script sets Asset site based on asset IDs + site IDs provided in an `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each site assignment.
 
-## Overview
-
-The script reads asset IDs + site IDs from `input.csv`, sends a request to assign each site via API, and logs the results to `output.csv`.
-
 ## Prerequisites
 
 - Node.js (>= 20.x)
@@ -13,7 +9,6 @@ The script reads asset IDs + site IDs from `input.csv`, sends a request to assig
   - `fs`
   - `csv-parser`
   - `csv-writer`
-  - `node-fetch`
 
 ## Installation
 

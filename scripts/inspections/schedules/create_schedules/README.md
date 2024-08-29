@@ -2,10 +2,6 @@
 
 This script creates schedules based on parameters provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each schedule creation.
 
-## Overview
-
-The script reads schedule parameters from `input.csv`, sends a request to create each schedule via API, and logs the results to `output.csv`.
-
 ## Prerequisites
 
 - Node.js (>= 20.x)
@@ -13,7 +9,6 @@ The script reads schedule parameters from `input.csv`, sends a request to create
   - `fs`
   - `csv-parser`
   - `csv-writer`
-  - `node-fetch`
 
 ## Installation
 
@@ -34,13 +29,11 @@ The script reads schedule parameters from `input.csv`, sends a request to create
 ## Usage
 
 1. Prepare an input.csv file with the following format:
-    
-| description | mustComplete | canLateSubmit | recurrence | startTimeHour | startTimeMinute | duration | timezone | fromDate | assigneeId | assigneeType | documentId | documentType | locationId | assetId |
-|-------------|--------------|---------------|------------|---------------|----------------|----------|----------|----------|------------|--------------|------------|--------------|------------|---------|
-| Sample 1    | ONE          | true            | MONTHLY      | 08            | 30             | P7D   | UTC      | 2024-08-01 | 12345      | USER         | 54321      | TEMPLATE       | 11111      | 22222   |
-| Sample 2    | ONE           | false           | MONTHLY     | 07            | 00             | 90 min   | EST      | 2024-09-01 | 67890      | ROLE        | 09876      | TEMPLATE       | 33333      | 44444   |
 
-
+| Description               | mustComplete | canLateSubmit | Recurrence                                  | startTimeHour | startTimeMinute | Duration | Timezone        | fromDate                        | Assignee ID                           | Assignee Type | Document ID                           | Document Type | Location ID                           | Asset ID                               |
+|----------------------------------------------|--------------|---------------|---------------------------------------------|---------------|-----------------|----------|-----------------|-----------------------------------|----------------------------------------|---------------|----------------------------------------|---------------|----------------------------------------|----------------------------------------|
+| FFE | FEP - Monthly Inspection | 0.1.1        | ONE          | TRUE          | FREQ=MONTHLY;INTERVAL=1;DTSTART=20240805T130000Z | 7             | 0               | P25D     | America/Chicago | 2024-08-05T00:00:00.000Z         | ae46484a-f1be-47f6-92d8-681ab80beb99   | ROLE          | template_e5b4a7e1d3884939ad1da50fcb2c80c8 | TEMPLATE      | 3e1084b4-5ce6-4cf2-9df0-88317f44ffa6   | 3a479eb9-f5f6-485a-991f-60e5e772347d   |
+| FFE | FEP - Monthly Inspection | 0.1.2        | ONE          | TRUE          | FREQ=MONTHLY;INTERVAL=1;DTSTART=20240805T130000Z | 7             | 0               | P25D     | America/Chicago | 2024-08-05T00:00:00.000Z         | ae46484a-f1be-47f6-92d8-681ab80beb99   | ROLE          | template_e5b4a7e1d3884939ad1da50fcb2c80c8 | TEMPLATE      | 3e1084b4-5ce6-4cf2-9df0-88317f44ffa6   | db0a0ee2-a3f2-4768-852e-3b1acc9a0e4e   |
 
 2. Run the script:
 
@@ -49,11 +42,7 @@ The script reads schedule parameters from `input.csv`, sends a request to create
 
 3. Check the output.csv file for the status of each schedule:
 
-| description | mustComplete | canLateSubmit | recurrence | startTimeHour | startTimeMinute | duration | timezone | fromDate    | assigneeId | assigneeType | documentId | documentType | locationId | assetId | status  |
-|-------------|--------------|---------------|------------|---------------|----------------|----------|----------|-------------|------------|--------------|------------|--------------|------------|---------|---------|
-| Sample 1    | ONE          | true          | MONTHLY    | 08            | 30             | P7D      | UTC      | 2024-08-01  | 12345      | USER         | 54321      | TEMPLATE     | 11111      | 22222   | SUCCESS |
-| Sample 2    | ONE          | false         | MONTHLY    | 07            | 00             | 90 min   | EST      | 2024-09-01  | 67890      | ROLE         | 09876      | TEMPLATE     | 33333      | 44444   | ERROR   |
-
-
-
-
+| Description               | mustComplete | canLateSubmit | Recurrence                                  | startTimeHour | startTimeMinute | Duration | Timezone        | fromDate                        | Assignee ID                           | Assignee Type | Document ID                           | Document Type | Location ID                           | Asset ID                               | Status  |
+|----------------------------------------------|--------------|---------------|---------------------------------------------|---------------|-----------------|----------|-----------------|-----------------------------------|----------------------------------------|---------------|----------------------------------------|---------------|----------------------------------------|----------------------------------------|---------|
+| FFE | FEP - Monthly Inspection | 0.1.1        | ONE          | TRUE          | FREQ=MONTHLY;INTERVAL=1;DTSTART=20240805T130000Z | 7             | 0               | P25D     | America/Chicago | 2024-08-05T00:00:00.000Z         | ae46484a-f1be-47f6-92d8-681ab80beb99   | ROLE          | template_e5b4a7e1d3884939ad1da50fcb2c80c8 | TEMPLATE      | 3e1084b4-5ce6-4cf2-9df0-88317f44ffa6   | 3a479eb9-f5f6-485a-991f-60e5e772347d   | SUCCESS |
+| FFE | FEP - Monthly Inspection | 0.1.2        | ONE          | TRUE          | FREQ=MONTHLY;INTERVAL=1;DTSTART=20240805T130000Z | 7             | 0               | P25D     | America/Chicago | 2024-08-05T00:00:00.000Z         | ae46484a-f1be-47f6-92d8-681ab80beb99   | ROLE          | template_e5b4a7e1d3884939ad1da50fcb2c80c8 | TEMPLATE      | 3e1084b4-5ce6-4cf2-9df0-88317f44ffa6   | db0a0ee2-a3f2-4768-852e-3b1acc9a0e4e   | ERROR   |

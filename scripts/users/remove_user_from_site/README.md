@@ -2,10 +2,6 @@
 
 This script removes users from sites based on user IDs + site IDs provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each site removal.
 
-## Overview
-
-The script reads user IDs + site IDs from `input.csv`, sends a request to remove each user from a site via API, and logs the results to `output.csv`.
-
 ## Prerequisites
 
 - Node.js (>= 20.x)
@@ -13,7 +9,6 @@ The script reads user IDs + site IDs from `input.csv`, sends a request to remove
   - `fs`
   - `csv-parser`
   - `csv-writer`
-  - `node-fetch`
 
 ## Installation
 

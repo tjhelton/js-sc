@@ -1,10 +1,6 @@
-# Add Users To A In Bulk
+# Assign Users To Sites In Bulk
 
-This script adds users to a group based on user IDs + group IDs provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each group addition.
-
-## Overview
-
-The script reads user IDs + group IDs from `input.csv`, sends a request to add each user to each group via API, and logs the results to `output.csv`.
+This script assigns users to sites based on user IDs + site IDs provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each site assignment.
 
 ## Prerequisites
 
@@ -13,7 +9,6 @@ The script reads user IDs + group IDs from `input.csv`, sends a request to add e
   - `fs`
   - `csv-parser`
   - `csv-writer`
-  - `node-fetch`
 
 ## Installation
 
@@ -36,21 +31,23 @@ The script reads user IDs + group IDs from `input.csv`, sends a request to add e
 
 1. Prepare an input.csv file with the following format:
     
-| userId | groupId |
+| userId | siteId |
 |--------|--------|
 | 12345  | 54321  |
 | 67890  | 09876  |
+
 
 2. Run the script:
 
     ```bash
     node index.mjs
 
-3. Check the output.csv file for the status of each user ID + group ID:
+3. Check the output.csv file for the status of each user ID + site ID:
 
-| userId | groupId | status  |
+| userId | siteId | status  |
 |--------|--------|---------|
 | 12345  | 54321  | SUCCESS |
 | 67890  | 09876  | ERROR   |
+
 
 
