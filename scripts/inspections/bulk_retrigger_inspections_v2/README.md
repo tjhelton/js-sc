@@ -23,3 +23,6 @@ None
 
 ## Notes for / from Ro:
 I did the script this way because I didn't want to create CSVs for this. I wanted to simply export the customer's data, get the time range, and perform a SQL query with a `WHERE` to immediately get the records that I had to process.
+
+## 2.0 Updates
+Created separate functions and logic for cleaner code.

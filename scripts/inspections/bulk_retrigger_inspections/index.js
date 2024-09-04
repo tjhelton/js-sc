@@ -1,5 +1,5 @@
 //replace the array at line 2 with the results from the SQL query in the README!
-const records = ['audit_709d6e7c003c435b94186a3120201052', 'audit_49e0648764a4450fafd5ff5eaee8fd0a', 'audit_d5b954daf11743fe81ab0b9c250ac3ae', 'audit_3f8ca567581c4015abf8746d7f7c4302']
+const records = []
 const token = process.argv[2]
 
 async function checkAndRetrig (audit) {
