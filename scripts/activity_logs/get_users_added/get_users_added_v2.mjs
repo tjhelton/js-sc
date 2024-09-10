@@ -1,19 +1,19 @@
-import { writeFile } from 'fs/promises';
-import axios from 'axios'
+// import { writeFile } from 'fs/promises';
+// import axios from 'axios'
 
 
-const token = process.argv[2]
+// const token = process.argv[2]
 
-  // let nextPage = '/feed/activity_log_events';
-  const options = {
-    headers: {
-      authorization: 'Bearer ' + token
-    }
-  };
+//   // let nextPage = '/feed/activity_log_events';
+//   const options = {
+//     headers: {
+//       authorization: 'Bearer ' + token
+//     }
+//   };
 
-let logs = []
+// let logs = []
 
-const data = await axios.get('https://api.safetyculture.io/feed/activity_log_events',options)
+// const data = await axios.get('https://api.safetyculture.io/feed/activity_log_events',options)
 
 // async function getActivityLogs(baseUrl) {
 //   let nextPage = '/feed/activity_log_events';
