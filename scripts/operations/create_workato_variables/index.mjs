@@ -14,9 +14,6 @@ async function createBlock(item){
         "type": "string",
         "optional": true,
         "label": item,
-        "details": {
-          "real_name": item
-        },
         "control_type": "text"
       }
     output.push(reformed)
