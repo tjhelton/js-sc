@@ -20,8 +20,8 @@ const processCsv = async () => {
       // Process each row
       for (const row of results) {
         const description = row.description;
-        // const mustComplete = row.mustComplete; //OPTIONAL
-        // const canLateSubmit = row.canLateSubmit; //OPTIONAL
+        const mustComplete = row.mustComplete; 
+        const canLateSubmit = row.canLateSubmit;
         const recurrence = row.recurrence;
         const startTimeHour = row.startTimeHour;
         const startTimeMinute = row.startTimeMinute;
@@ -29,9 +29,9 @@ const processCsv = async () => {
         const timezone = row.timezone;
         const fromDate = row.fromDate;
         const assigneeId = row.assigneeId;
-        // const assigneeType = row.assigneeType; //OPTIONAL
+        const assigneeType = row.assigneeType; 
         const documentId = row.documentId;
-        // const documentType = row.documentType; //OPTIONAL
+        const documentType = row.documentType; 
         const assetId = row.assetId;
         const locationId = row.locationId;
 
@@ -44,13 +44,13 @@ const processCsv = async () => {
             authorization: `Bearer ${bToken}`,
           },
           body: JSON.stringify({
-            must_complete: 'ONE',
-            can_late_submit: true,
+            must_complete: mustComplete,
+            can_late_submit: canLateSubmit,
             start_time: {hour: startTimeHour, minute: startTimeMinute},
-            document: {type: 'TEMPLATE', id: documentId},
+            document: {type: documentType, id: documentId},
             status: 'STATUS_UNSPECIFIED',
             creator: {type: 'ENTITY_TYPE_UNSPECIFIED'},
-            assignees: [{type: 'ROLE', id: assigneeId}],
+            assignees: [{type: assigneeType, id: assigneeId}],
             timezone: timezone,
             duration: duration,
             from_date: fromDate,
