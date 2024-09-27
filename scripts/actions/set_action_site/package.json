@@ -1,0 +1,19 @@
+{
+  "name": "set_action_site",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js <token>"
+  },
+  "repository": {
+    "type": "git",
+    "url": "sharingan"
+  },
+  "author": "roronoaBoi",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "neat-csv": "^7.0.0"
+  }
+}
