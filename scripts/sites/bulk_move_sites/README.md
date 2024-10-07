@@ -18,6 +18,7 @@ This script moves existing sites to a new parent based on the site IDs and new p
 
    ```bash
    npm i
+   ```
 
 ## Configuration
 
@@ -25,6 +26,7 @@ This script moves existing sites to a new parent based on the site IDs and new p
 
     ```bash
     const bToken = 'TOKEN_HERE';
+    ```
 
 
 ## Usage
@@ -41,6 +43,7 @@ This script moves existing sites to a new parent based on the site IDs and new p
 
     ```bash
     node index.mjs
+    ```
 
 3. Check the output.csv file for the status of each moved site:
 

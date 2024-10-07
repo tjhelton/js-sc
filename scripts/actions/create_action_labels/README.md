@@ -18,6 +18,7 @@ This script creates action item labels in bulk using the label names provided in
 
    ```bash
    npm i
+   ```
 
 ## Configuration
 
@@ -25,6 +26,7 @@ This script creates action item labels in bulk using the label names provided in
 
     ```bash
     const bToken = 'TOKEN_HERE';
+    ```
 
 
 ## Usage
@@ -40,6 +42,7 @@ This script creates action item labels in bulk using the label names provided in
 
     ```bash
     node index.mjs
+    ```
 
 3. Check the output.csv file for the status of each asset ID + site ID:
 

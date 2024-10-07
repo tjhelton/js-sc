@@ -18,6 +18,7 @@ This script creates new sites in bulk based on the site names and parent IDs pro
 
    ```bash
    npm i
+   ```
 
 ## Configuration
 
@@ -25,6 +26,7 @@ This script creates new sites in bulk based on the site names and parent IDs pro
 
     ```bash
     const bToken = 'TOKEN_HERE';
+    ```
 
 
 ## Usage
@@ -41,6 +43,7 @@ This script creates new sites in bulk based on the site names and parent IDs pro
 
     ```bash
     node index.mjs
+    ```
 
 3. Check the output.csv file for the status of each new site:
 

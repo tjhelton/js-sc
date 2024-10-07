@@ -18,6 +18,7 @@ This script updates site name based on site IDs + newNames provided in the `inpu
 
    ```bash
    npm i
+   ```
 
 ## Configuration
 
@@ -25,6 +26,7 @@ This script updates site name based on site IDs + newNames provided in the `inpu
 
     ```bash
     const bToken = 'TOKEN_HERE';
+    ```
 
 
 ## Usage
@@ -41,6 +43,7 @@ This script updates site name based on site IDs + newNames provided in the `inpu
 
     ```bash
     node index.mjs
+    ```
 
 3. Check the output.csv file for the status of each site ID + newName:
 

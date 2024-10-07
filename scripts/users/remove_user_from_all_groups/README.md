@@ -23,6 +23,7 @@ The script reads user IDs from `input.csv`, retrieves all groups associated with
 
    ```bash
    npm i
+   ```
 
 ## Configuration
 
@@ -30,6 +31,7 @@ The script reads user IDs from `input.csv`, retrieves all groups associated with
 
     ```bash
     const bToken = 'TOKEN_HERE';
+    ```
 
 
 ## Usage
@@ -45,6 +47,7 @@ The script reads user IDs from `input.csv`, retrieves all groups associated with
 
     ```bash
     node index.mjs
+    ```
 
 3. Check the output.csv file for the status of each user ID:
 
