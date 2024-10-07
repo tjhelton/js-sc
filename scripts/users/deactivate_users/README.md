@@ -18,6 +18,7 @@ This script deactivates users based on user IDs provided in an `input.csv` file.
 
    ```bash
    npm i
+   ```
 
 ## Configuration
 
@@ -25,6 +26,7 @@ This script deactivates users based on user IDs provided in an `input.csv` file.
 
     ```bash
     const bToken = 'TOKEN_HERE';
+    ```
 
 
 ## Usage
@@ -40,6 +42,7 @@ This script deactivates users based on user IDs provided in an `input.csv` file.
 
     ```bash
     node index.mjs
+    ```
 
 3. Check the output.csv file for the status of each user ID:
 

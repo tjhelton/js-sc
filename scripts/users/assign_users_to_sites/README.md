@@ -18,6 +18,7 @@ This script assigns users to sites based on user IDs + site IDs provided in the 
 
    ```bash
    npm i
+   ```
 
 ## Configuration
 
@@ -25,6 +26,7 @@ This script assigns users to sites based on user IDs + site IDs provided in the 
 
     ```bash
     const bToken = 'TOKEN_HERE';
+    ```
 
 
 ## Usage
@@ -41,6 +43,7 @@ This script assigns users to sites based on user IDs + site IDs provided in the 
 
     ```bash
     node index.mjs
+    ```
 
 3. Check the output.csv file for the status of each user ID + site ID:
 

@@ -18,6 +18,7 @@ This script archives inspections based on audit IDs provided in the `input.csv` 
 
    ```bash
    npm i
+   ```
 
 ## Configuration
 
@@ -25,6 +26,7 @@ This script archives inspections based on audit IDs provided in the `input.csv` 
 
     ```bash
     const bToken = 'TOKEN_HERE';
+    ```
 
 
 ## Usage
@@ -40,6 +42,7 @@ This script archives inspections based on audit IDs provided in the `input.csv` 
 
     ```bash
     node index.mjs
+    ```
 
 3. Check the output.csv file for the status of each audit ID:
 

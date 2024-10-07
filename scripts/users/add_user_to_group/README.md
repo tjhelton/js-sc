@@ -18,6 +18,7 @@ This script adds users to a group based on user IDs + group IDs provided in the 
 
    ```bash
    npm i
+   ```
 
 ## Configuration
 
@@ -25,6 +26,7 @@ This script adds users to a group based on user IDs + group IDs provided in the 
 
     ```bash
     const bToken = 'TOKEN_HERE';
+    ```
 
 
 ## Usage
@@ -40,6 +42,7 @@ This script adds users to a group based on user IDs + group IDs provided in the 
 
     ```bash
     node index.mjs
+    ```
 
 3. Check the output.csv file for the status of each user ID + group ID:
 
