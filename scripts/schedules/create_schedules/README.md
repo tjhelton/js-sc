@@ -18,6 +18,7 @@ This script creates schedules based on parameters provided in the `input.csv` fi
 
    ```bash
    npm i
+   ```
 
 ## Configuration
 
@@ -25,24 +26,27 @@ This script creates schedules based on parameters provided in the `input.csv` fi
 
     ```bash
     const bToken = 'TOKEN_HERE';
+    ```
 
 ## Usage
 
 1. Prepare an input.csv file with the following format:
 
-| Description                      | mustComplete   | canLateSubmit   | Recurrence                                       | startTimeHour   | startTimeMinute | Duration   | Timezone        | fromDate                 | Assignee ID                          | Assignee Type   | Document ID                               | Document Type   | Location ID                          | Asset ID                             |
-|:---------------------------------|:---------------|:----------------|:-------------------------------------------------|----------------:|----------------:|:-----------|:----------------|:-------------------------|:-------------------------------------|:----------------|:----------------------------------------|:----------------|:-------------------------------------|:-------------------------------------|
-| FFE | FEP - Monthly Inspection 1 | ONE            | True            | FREQ=MONTHLY;INTERVAL=1;DTSTART=20240805T130000Z |               7 |               0 | P25D       | America/Chicago | 2024-08-05T00:00:00.000Z | ae46484a-f1be-47f6-92d8-681ab80beb99 | ROLE            | template_e5b4a7e1d3884939ad1da50fcb2c80c8 | TEMPLATE        | 3e1084b4-5ce6-4cf2-9df0-88317f44ffa6 | 3a479eb9-f5f6-485a-991f-60e5e772347d |
-| FFE | FEP - Monthly Inspection 2 | ONE            | True            | FREQ=MONTHLY;INTERVAL=1;DTSTART=20240805T130000Z |               7 |               0 | P25D       | America/Chicago | 2024-08-05T00:00:00.000Z | ae46484a-f1be-47f6-92d8-681ab80beb99 | ROLE            | template_e5b4a7e1d3884939ad1da50fcb2c80c8 | TEMPLATE        | 3e1084b4-5ce6-4cf2-9df0-88317f44ffa6 | db0a0ee2-a3f2-4768-852e-3b1acc9a0e4e |
+|description|mustComplete                 |canLateSubmit|recurrence                                   |startTimeHour|startTimeMinute|duration|timezone       |fromDate  |assigneeId                          |assigneeType|documentId                               |documentType|locationId                          |assetId                             |
+|-----------|-----------------------------|-------------|---------------------------------------------|-------------|---------------|--------|---------------|----------|------------------------------------|------------|-----------------------------------------|------------|------------------------------------|------------------------------------|
+|FEP - Monthly Inspection 0.1.1|ONE                          |TRUE         |FREQ=MONTHLY;INTERVAL=1;DTSTART=20240805T130000Z|7            |0              |P25D    |America/Chicago|2024-08-05|ae46484a-f1be-47f6-92d8-681ab80beb99|ROLE        |template_e5b4a7e1d3884939ad1da50fcb2c80c8|TEMPLATE    |3e1084b4-5ce6-4cf2-9df0-88317f44ffa6|3a479eb9-f5f6-485a-991f-60e5e772347d|
+|FEP - One-Off Inspection 0.1.2|ONE                          |TRUE         |FREQ=DAILY;INTERVAL=1;DTSTART=20240805T130000Z;COUNT=1|7            |0              |P3D     |America/Chicago|2024-08-05|ae46484a-f1be-47f6-92d8-681ab80beb99|ROLE        |template_e5b4a7e1d3884939ad1da50fcb2c80c8|TEMPLATE    |3e1084b4-5ce6-4cf2-9df0-88317f44ffa6|db0a0ee2-a3f2-4768-852e-3b1acc9a0e4e|
+
 
 2. Run the script:
 
     ```bash
     node index.mjs
+    ```
 
 3. Check the output.csv file for the status of each schedule:
 
-| Description                      | mustComplete   | canLateSubmit   | Recurrence                                       | startTimeHour   | startTimeMinute | Duration   | Timezone        | fromDate                 | Assignee ID                          | Assignee Type   | Document ID                               | Document Type   | Location ID                          | Asset ID                             | Status   |
-|:---------------------------------|:---------------|:----------------|:-------------------------------------------------|----------------:|----------------:|:-----------|:----------------|:-------------------------|:-------------------------------------|:----------------|:----------------------------------------|:----------------|:-------------------------------------|:-------------------------------------|:---------|
-| FFE | FEP - Monthly Inspection 1 | ONE            | True            | FREQ=MONTHLY;INTERVAL=1;DTSTART=20240805T130000Z |               7 |               0 | P25D       | America/Chicago | 2024-08-05T00:00:00.000Z | ae46484a-f1be-47f6-92d8-681ab80beb99 | ROLE            | template_e5b4a7e1d3884939ad1da50fcb2c80c8 | TEMPLATE        | 3e1084b4-5ce6-4cf2-9df0-88317f44ffa6 | 3a479eb9-f5f6-485a-991f-60e5e772347d | SUCCESS  |
-| FFE | FEP - Monthly Inspection 2 | ONE            | True            | FREQ=MONTHLY;INTERVAL=1;DTSTART=20240805T130000Z |               7 |               0 | P25D       | America/Chicago | 2024-08-05T00:00:00.000Z | ae46484a-f1be-47f6-92d8-681ab80beb99 | ROLE            | template_e5b4a7e1d3884939ad1da50fcb2c80c8 | TEMPLATE        | 3e1084b4-5ce6-4cf2-9df0-88317f44ffa6 | db0a0ee2-a3f2-4768-852e-3b1acc9a0e4e | ERROR    |
+|description|mustComplete                 |canLateSubmit|recurrence                                   |startTimeHour|startTimeMinute|duration|timezone       |fromDate  |assigneeId                          |assigneeType|documentId                               |documentType|locationId                          |assetId                             |status |
+|-----------|-----------------------------|-------------|---------------------------------------------|-------------|---------------|--------|---------------|----------|------------------------------------|------------|-----------------------------------------|------------|------------------------------------|------------------------------------|-------|
+|FEP - Monthly Inspection 0.1.1|ONE                          |TRUE         |FREQ=MONTHLY;INTERVAL=1;DTSTART=20240805T130000Z|7            |0              |P25D    |America/Chicago|2024-08-05|ae46484a-f1be-47f6-92d8-681ab80beb99|ROLE        |template_e5b4a7e1d3884939ad1da50fcb2c80c8|TEMPLATE    |3e1084b4-5ce6-4cf2-9df0-88317f44ffa6|3a479eb9-f5f6-485a-991f-60e5e772347d|SUCCESS|
+|FEP - One-Off Inspection 0.1.2|ONE                          |TRUE         |FREQ=DAILY;INTERVAL=1;DTSTART=20240805T130000Z;COUNT=1|7            |0              |P3D     |America/Chicago|2024-08-05|ae46484a-f1be-47f6-92d8-681ab80beb99|ROLE        |template_e5b4a7e1d3884939ad1da50fcb2c80c8|TEMPLATE    |3e1084b4-5ce6-4cf2-9df0-88317f44ffa6|db0a0ee2-a3f2-4768-852e-3b1acc9a0e4e|ERROR  |
