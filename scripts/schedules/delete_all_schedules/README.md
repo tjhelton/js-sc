@@ -16,6 +16,7 @@ This script deletes all schedules that exist in the SC environment. There is no 
 
    ```bash
    npm i
+   ```
 
 ## Configuration
 
@@ -23,6 +24,7 @@ This script deletes all schedules that exist in the SC environment. There is no 
 
     ```bash
     const bToken = 'TOKEN_HERE';
+    ```
 
 
 ## Usage
@@ -31,6 +33,7 @@ This script deletes all schedules that exist in the SC environment. There is no 
 
     ```bash
     node index.mjs
+    ```
 
 2. Check the output.csv file for the status of each schedule deletion:
 
