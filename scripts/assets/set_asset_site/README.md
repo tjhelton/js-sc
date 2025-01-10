@@ -1,54 +1,32 @@
-# Set Asset Sites In Bulk
+# Bulk Set Asset Site
 
-This script sets Asset site based on asset IDs + site IDs provided in an `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each site assignment.
+The purpose of this script is to set the `site_id` associated with an `asset_id` in bulk.
 
-## Prerequisites
+## Set up:
 
-- Node.js (>= 20.x)
-- Required npm packages:
-  - `fs`
-  - `csv-parser`
-  - `csv-writer`
+Ensure dependencies are installed by running the below command in the directory of the script:
 
-## Installation
+```bash
+npm i
+```
 
-1. Clone or download this repository.
-2. Navigate to the project directory.
-3. Install the required npm packages:
+Create a .env file with a `TOKEN` parameter as follows:
 
-   ```bash
-   npm i
-   ```
+```bash
+TOKEN=5b1d73376dhy2a92960a0171b...
+```
 
-## Configuration
+## Running the script:
 
-1. Replace "TOKEN_HERE" with your SC bearer token 
+Once the set up is complete, run the following command in a terminal:
+`node index.mjs`
 
-    ```bash
-    const bToken = 'TOKEN_HERE';
-    ```
+## Outputs:
 
+The script will create an `output.csv` including a `status` column.
 
-## Usage
+## Additional Comments
 
-1. Prepare an input.csv file with the following format:
-    
-| assetId | siteId |
-|--------|--------|
-| 12345  | 54321  |
-| 67890  | 09876  |
+In the event of failures, the `output.csv` file can be filtered for errors and renamed to `input.csv` to be passed again.
 
-2. Run the script:
-
-    ```bash
-    node index.mjs
-    ```
-
-3. Check the output.csv file for the status of each asset ID + site ID:
-
-| assetId | siteId | status  |
-|--------|--------|---------|
-| 12345  | 54321  | SUCCESS |
-| 67890  | 09876  | ERROR   |
-
-
+At the time of this writing, the SafetyCulture endpoint for updating the site on an asset will only accept a `site_id` in its UUID format. The script accounts for this and accepts both UUID and S12 formats.

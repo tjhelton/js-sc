@@ -1,33 +1,44 @@
 import { writeFileSync } from 'fs';
+import dotenv from 'dotenv'
+dotenv.config()
 
-const token = process.argv[2]
+const token = process.env.TOKEN
 
-async function getAssets () {
-    const options = {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          'sc-integration-id': 'sc-readme',
-          authorization: 'Bearer ' + token
+const url = 'https://api.safetyculture.io'
+
+const options = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    'sc-integration-id': 'sc-readme',
+    authorization: `Bearer ${token}`
+  }
+};
+
+async function getAssets() {
+    let assets = []
+    let appendUrl = '/feed/assets'
+    let page = 1
+    while(appendUrl !== null) {
+      const response = await fetch(`${url}${appendUrl}`,options)
+      const json = await response.json()
+      console.log(`fetching page ${page}...`)
+      page++
+      for(const asset of json.data) {
+        if(asset.state !== 'ASSET_STATE_ARCHIVED'){
+          assets.push(asset.id)
+        } else {
+          //skip
         }
       }
-    try {
-      const response = await fetch(`https://api.safetyculture.io/feed/assets`,options)
-      if(!response.ok) {
-        throw new Error(`data fetch error! Status: ${response.status}`)
-      }
-      const responseJson = await response.json()
-      return responseJson.data
-    }catch (error) {
-      console.error('Failed to fetch sites:', error)
-      return null
+      appendUrl = json.metadata.next_page
     }
-}
+    return assets
+};
 
 async function main(){
-  const sites = await getAssets()
-  const outputArray = sites.map(item => item.id);
-  writeFileSync('assets.json', JSON.stringify(outputArray, null, 2));
-}
+  const assets = await getAssets()
+  writeFileSync('assets.json', JSON.stringify(assets, null, 2));
+};
 
 main()

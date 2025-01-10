@@ -1,75 +1,69 @@
-import fs from 'fs';
-import csv from 'csv-parser';
+import neatCSV from 'neat-csv';
+import fs from 'fs/promises';
+import dotenv from 'dotenv';
 import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
+dotenv.config()
 
-const bToken = 'TOKEN_HERE';
+const url = 'https://api.safetyculture.io'
+const token = process.env.TOKEN
 
-const inputCsvPath = 'input.csv';
+const assets = await fs.readFile('input.csv', 'utf-8')
+const assetsCsv = await neatCSV(assets)
+
 const outputCsvPath = 'output.csv';
 
-const processCsv = async () => {
-  const results = [];
+const csvWriter = createCsvWriter({
+  path: outputCsvPath,
+  header: [
+    { id: 'asset_id', title: 'asset_id' },
+    { id: 'site_id', title: 'site_id' },
+    { id: 'status', title: 'status'}
+  ],
+});
 
-  // Read the CSV file
-  fs.createReadStream(inputCsvPath)
-    .pipe(csv())
-    .on('data', (row) => {
-      results.push(row);
-    })
-    .on('end', async () => {
-      // Process each row
-      for (const row of results) {
-        const assetId = row.assetId;
-        const siteId = row.siteId;
-
-        const options = {
-          method: 'PATCH',
-          headers: {
-            accept: 'application/json',
-            'sc-integration-id': 'sc-readme',
-            'content-type': 'application/json',
-            authorization: `Bearer ${bToken}`,
-          },
-          body: JSON.stringify({
-            type: {type: 'TYPE_CATEGORY_UNSPECIFIED'},
-            site: {id: siteId},
-            state: 'ASSET_STATE_UNSPECIFIED'
-          })
-        };
-
-        try {
-          const response = await fetch(`https://api.safetyculture.io/assets/v1/assets/${assetId}`, options);
-
-          // Log the full response for debugging
-          const responseText = await response.text();
-          console.log(`Response for asset ${assetId}:`, responseText);
-
-          if (response.ok) {
-            row.status = 'SUCCESS';
-            console.log(`SUCCESS For: ${assetId}`)
-          } else {
-            row.status = 'ERROR';
-            console.error(`Error for asset ${assetId}: ${responseText}`);
-          }
-        } catch (err) {
-          row.status = 'ERROR';
-          console.error(`Network error for asset ${assetId}:`, err);
-        }
-      }
-
-      // Write the results to a new CSV file
-      const csvWriter = createCsvWriter({
-        path: outputCsvPath,
-        header: [
-          { id: 'assetId', title: 'assetId' },
-          { id: 'siteId', title: 'siteId' },
-          { id: 'status', title: 'status' },
-        ],
-      });
-
-      await csvWriter.writeRecords(results);
-      console.log('CSV file has been processed and saved as output.csv');
-    });
+async function writer(asset,site,status) {
+  const record = [
+    {
+      asset_id: asset,
+      site_id: site,
+      status: status
+    }
+  ]
+  await csvWriter.writeRecords(record)
 };
 
-processCsv();
+function idVal(str) {
+  if (str.includes('location')) {
+    const uuid = str.split('_')[1]
+    return `${uuid.substr(0, 8)}-${uuid.substr(8, 4)}-${uuid.substr(12, 4)}-${uuid.substr(16, 4)}-${uuid.substr(20)}`
+  } else {
+    return str
+  }
+};
+
+async function setSite(asset, site) {
+  const appendUrl = `/assets/v1/assets/${asset}`
+  const siteV = idVal(site)
+  const options = {
+    method: 'PATCH',
+    headers: {
+      accept: 'application/json',
+      'content-type': 'application/json',
+      authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({site: {id: siteV}})
+  };
+
+  const response = await fetch(`${url}${appendUrl}`,options)
+  if(!response.ok) {
+    await writer(asset,siteV,response.statusText)
+    console.log(`call to set action: ${asset} to location: ${siteV} failed`)
+  } else {
+    await writer(asset,siteV,response.statusText)
+    console.log(`${asset} successfully set to ${siteV}`)
+  }
+};
+
+for (const row of assetsCsv) {
+  await setSite(row.asset_id,row.site_id);
+};
