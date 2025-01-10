@@ -1,97 +1,72 @@
+import dotenv from 'dotenv';
 import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
+dotenv.config()
 
-const bToken = 'TOKEN_HERE';
-const baseUrl = 'https://api.safetyculture.io';
-const outputCsvPath = 'output.csv';
-
-// Function to fetch all action label IDs and names
-async function fetchAllActionLabels(url, options) {
-  try {
-    const response = await fetch(url, options);
-    const result = await response.json();
-
-    // Extract label IDs and names from the response
-    const labels = result.labels.map(label => ({
-      labelId: label.label_id,
-      labelName: label.label_name,
-    }));
-
-    return labels;
-  } catch (error) {
-    console.error('Fetch error:', error);
-    return [];
+const token = process.env.TOKEN
+const baseUrl = 'https://api.safetyculture.io'
+const getOptions = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    authorization: `Bearer ${token}`
   }
 }
 
-// Function to delete action labels based on fetched label IDs
-const deleteActionLabels = async () => {
-  const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      'sc-integration-id': 'sc-readme',
-      authorization: `Bearer ${bToken}`,
-    },
-  };
+const outputCsvPath = 'output.csv';
 
-  // Fetch all action label IDs and names
-  const labels = await fetchAllActionLabels(
-    `${baseUrl}/tasks/v1/customer_configuration/action_labels`,
-    options
-  );
+const csvWriter = createCsvWriter({
+  path: outputCsvPath,
+  header: [
+    { id: 'id', title: 'labelId' },
+    { id: 'name', title: 'labelName' },
+    { id: 'status', title: 'status'}
+  ],
+});
 
-  const labelIds = labels.map(label => label.labelId);
-  const results = [];
-
-  // Prepare delete request options
-  const deleteOptions = {
-    method: 'POST',
-    headers: {
-      accept: 'application/json',
-      'sc-integration-id': 'sc-readme',
-      'content-type': 'application/json',
-      authorization: `Bearer ${bToken}`,
-    },
-    body: JSON.stringify({ label_ids: labelIds }),
-  };
-
-  try {
-    const response = await fetch(`${baseUrl}/tasks/v1/customer_configuration/action_labels/delete`, deleteOptions);
-    
-    // Log the full response for debugging
-    const responseText = await response.text();
-
-    if (response.ok) {
-      results.push({ status: 'SUCCESS' });
-      console.log(`All action labels deleted successfully.`);
-    } else {
-      results.push({ status: 'ERROR' });
-      console.error(`Error deleting action labels: ${responseText}`);
+async function writer(id,label,status){
+  const record = [
+    {
+      name: label,
+      id: id,
+      status: status
     }
-  } catch (err) {
-    results.push({ status: 'ERROR' });
-    console.error('Network error during action label deletion:', err);
+  ]
+  await csvWriter.writeRecords(record)
+}
+
+async function getLabels() {
+  const actionLabels = []
+  const response = await fetch(`${baseUrl}/tasks/v1/customer_configuration/action_labels`, getOptions)
+  const pResponse = await response.json()
+  const labels = pResponse.labels
+
+  for (const label of labels) {
+    await writer(label.label_id,label.label_name)
+    actionLabels.push(label.label_id)
   }
+  return actionLabels
+}
 
-  // Write the results to a new CSV file
-  const csvWriter = createCsvWriter({
-    path: outputCsvPath,
-    header: [
-      { id: 'labelId', title: 'labelId' },
-      { id: 'labelName', title: 'labelName' },
-      { id: 'status', title: 'status' },
-    ],
-  });
+async function deleteLabels() {
+  const list = await getLabels()
+  const response = await fetch(`${baseUrl}/tasks/v1/customer_configuration/action_labels/delete`,
+    {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({label_ids: list})
+    })
+    if(!response.ok) {
+      console.log('deletion call failed')
+    } else {
+      console.log('deletion successful')
+    }
+}
 
-  const csvData = labels.map(label => ({
-    labelId: label.labelId,
-    labelName: label.labelName,
-    status: results[0].status, // Since it's bulk delete, the status will be the same for all
-  }));
+async function main() {
+  await deleteLabels()
+}
 
-  await csvWriter.writeRecords(csvData);
-  console.log('CSV file has been processed and saved as output.csv');
-};
-
-// Run the script
-deleteActionLabels();
+main()
