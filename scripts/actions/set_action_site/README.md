@@ -1,4 +1,4 @@
-# script name
+# Bulk Set Action Site
 
 The purpose of this script is to set the `site_id` associated with an `action_id` in bulk.
 
