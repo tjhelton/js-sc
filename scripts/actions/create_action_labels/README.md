@@ -1,54 +1,38 @@
-# Create Action Labels In Bulk
+# Bulk Create Action Labels
 
-This script creates action item labels in bulk using the label names provided in `input.csv`. The results are saved in an `output.csv` file, indicating the status of label creation.
+The purpose of this script is to create action labels in bulk.
 
-## Prerequisites
+## Set up:
 
-- Node.js (>= 20.x)
-- Required npm packages:
-  - `fs`
-  - `csv-parser`
-  - `csv-writer`
+Ensure dependencies are installed by running the below command in the directory of the script:
 
-## Installation
+```bash
+npm i
+```
 
-1. Clone or download this repository.
-2. Navigate to the project directory.
-3. Install the required npm packages:
+Create a .env file with a `TOKEN` parameter as follows:
 
-   ```bash
-   npm i
-   ```
+```bash
+TOKEN=5b1d73376dhy2a92960a0171b...
+```
 
-## Configuration
+Create a CSV titled `input.csv` and save it in the directory of the script. Ensure the CSV has a column entitled `labelName`:
 
-1. Replace "TOKEN_HERE" with your SC bearer token 
+```csv
+labelName
+<data>
+<data>
+```
 
-    ```bash
-    const bToken = 'TOKEN_HERE';
-    ```
+## Running the script:
 
+Once the set up is complete, run the following command in a terminal:
+`node index.mjs`
 
-## Usage
+## Outputs:
 
-1. Prepare an input.csv file with the following format:
-    
-| labelName |
-|--------|
-| Type 1  |
-| Type 2  |
+The script will create a `output.csv` including a `status` column.
 
-2. Run the script:
+## Additional Comments
 
-    ```bash
-    node index.mjs
-    ```
-
-3. Check the output.csv file for the status of each asset ID + site ID:
-
-| labelName | labelId | status  |
-|--------|--------|---------|
-| Type 1  | 123e4567-e89b-12d3-a456-426614174000  | SUCCESS |
-| Type 2  | 789e4567-e89b-12d3-a456-426614174111  | ERROR   |
-
-
+In the event that a creating an action label fails, the `output.csv` is structured so that it can be renamed to `input.csv` and the script can be re-ran for failures.

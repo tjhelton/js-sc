@@ -1,46 +1,32 @@
-# Delete ALL Action Labels In Bulk
+# Delete All Action Labels
 
-This script deletes all action labels that exist in the SC environment. There is no input file as we make a call to fetch all label IDs. The results are saved in an `output.csv` file, indicating the status of each action label deletion.
+The purpose of this script is to delete all action labels in a SafetyCulture environment.
 
-## Prerequisites
+## Set up:
 
-- Node.js (>= 20.x)
-- Required npm packages:
-  - `csv-writer`
+Ensure dependencies are installed by running the below command in the directory of the script:
 
-## Installation
+```bash
+npm i
+```
 
-1. Clone or download this repository.
-2. Navigate to the project directory.
-3. Install the required npm packages:
+Create a .env file with a `TOKEN` parameter as follows:
 
-   ```bash
-   npm i
-   ```
+```bash
+TOKEN=5b1d73376dhy2a92960a0171b...
+```
 
-## Configuration
+This script requires no further setup.
 
-1. Replace "TOKEN_HERE" with your SC bearer token 
+## Running the script:
 
-    ```bash
-    const bToken = 'TOKEN_HERE';
-    ```
+Once the set up is complete, run the following command in a terminal:
+`node index.mjs`
 
+## Outputs:
 
-## Usage
+As this script performs one API call for multiple labels, a single `output.csv` is produced to show all of the action labels fetched before the deletion.
 
-1. Run the script:
+## Additional Comments
 
-    ```bash
-    node index.mjs
-    ```
-
-2. Check the output.csv file for the status of each action label deletion:
-
-| labelId | labelName | status |
-|--------|--------|----------|
-| 123e4567-e89b-12d3-a456-426614174000  | Label 1 | SUCCESS |
-| 789e4567-e89b-12d3-a456-426614174111  | Label 2 | ERROR |
-
-
-
+The output could be renamed to `input.csv` and used with the `create_action_labels` script if needed.
