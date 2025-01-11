@@ -1,33 +1,60 @@
-import neatCSV from 'neat-csv';
 import fs from 'fs/promises';
+import dotenv from 'dotenv';
+import neatCsv from 'neat-csv';
+import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
+dotenv.config()
 
-const token = process.argv[2]
+const token = process.env.TOKEN
+
+const inputCsvPath = await fs.readFile('input.csv', 'utf8')
+const inputProc = await neatCsv(inputCsvPath)
+
+const outputCsvPath = 'output.csv';
+
+const url = 'https://api.safetyculture.io'
+
+const csvWriter = createCsvWriter({
+  path: outputCsvPath,
+  header: [
+    { id: 'name', title: 'groupName' },
+    { id: 'id', title: 'groupId' },
+    { id: 'status', title: 'Status'}
+  ],
+});
+
+async function writer(name,groupId,status){
+  const record = [
+    {
+      name: name,
+      id: groupId,
+      status: status
+    }
+  ]
+  await csvWriter.writeRecords(record)
+};
 
 async function createGroups(name) {
-    const url = 'https://api.safetyculture.io/groups'
-    const options = {
-        method: 'POST',
-        headers: {
-          accept: 'application/json',
-          'content-type': 'application/json',
-          authorization: 'Bearer ' + token
-        },
-        body: JSON.stringify({name: name})
-      };
-
-    await fetch(url,options)
-    .then(console.log('group called ' + name + ' created!'))
-}
-
-async function reader(csvName) {
-    const csvRaw = (await fs.readFile(csvName)).toString();
-    const csv = await neatCSV(csvRaw);
-    return csv;
+  const ammendUrl = '/groups'
+  const options = {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      'content-type': 'application/json',
+      authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({name: name})
   };
+  const response = await fetch(`${url}${ammendUrl}`,options)
+  if(!response.ok) {
+    console.log(`error creating group ${name}`)
+    await writer(name,'no id',response.statusText)
+  } else {
+    const json = await response.json()
+    console.log(`group ${name} created with ${json.id}`)
+    await writer(name,`${json.id}`,response.statusText)
+  }
+};
 
-//create user array outside of reader function
-const groups = await reader('groupNames.csv');
-  
-for (const row of groups) {
-await createGroups(row.names);
+for (const row of inputProc) {
+await createGroups(row.groupName);
 };
