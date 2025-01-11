@@ -1,0 +1,2 @@
+# ensuring json extracts dont get uploaded
+*.json
