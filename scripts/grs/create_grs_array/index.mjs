@@ -1,34 +1,28 @@
 import { writeFileSync } from 'fs';
+import dotenv from 'dotenv'
+dotenv.config()
 
-const token = process.argv[2]
-const setId = process.argv[3]
+const token = process.env.TOKEN
 
-async function getResponseSet (item) {
-    const options = {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          'sc-integration-id': 'sc-readme',
-          authorization: 'Bearer ' + token
-        }
-      }
-    try {
-      const response = await fetch(`https://api.safetyculture.io/response_sets/${item}`,options)
-      if(!response.ok) {
-        throw new Error(`data fetch error! Status: ${response.status}`)
-      }
-      const responseJson = await response.json()
-      return responseJson.responses
-    }catch (error) {
-      console.error('Failed to fetch response set:', error)
-      return null
+const url = 'https://api.safetyculture.io'
+
+const setId = process.env.GRS
+
+async function createGrsArray (item) {
+  const ammendUrl = `/response_sets/${item}`
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      'sc-integration-id': 'sc-readme',
+      authorization: `Bearer ${token}`
     }
-}
+  };
+  const response = await fetch(`${url}${ammendUrl}`,options)
+  const json = await response.json()
+  const ids = json.responses
+  const mResponse = ids.map(responseB => responseB.id)
+  writeFileSync('grs.json', JSON.stringify(mResponse, null, 2))
+};
 
-async function main(){
-  const responseSet = await getResponseSet(setId)
-  const outputArray = responseSet.map(item => item.id);
-  writeFileSync('grsids.json', JSON.stringify(outputArray, null, 2));
-}
-
-main()
+createGrsArray(setId)

@@ -1,37 +1,58 @@
 import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
+import dotenv from 'dotenv'
+dotenv.config()
+
+const token = process.env.TOKEN
+
+const url = 'https://api.safetyculture.io'
+
+const setId = process.env.GRS
+
 const csvWriter = createCsvWriter({
-    path: 'responses.csv',
+    path: 'output.csv',
     header: [
       {id: 'label', title: 'label'},
       {id: 'id', title: 'id'}
     ]
 });
 
-const token = process.argv[2]
-const setId = process.argv[3]
-
-async function getResponseSet (item) {
-    const options = {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          'sc-integration-id': 'sc-readme',
-          authorization: 'Bearer ' + token
-        }
-      }
-    try {
-      const response = await fetch(`https://api.safetyculture.io/response_sets/${item}`,options)
-      if(!response.ok) {
-        throw new Error(`data fetch error! Status: ${response.status}`)
-      }
-      const responseJson = await response.json()
-      return responseJson.responses
-    }catch (error) {
-      console.error('Failed to fetch response set:', error)
-      return null
+async function writer(id,label){
+  const record = [
+    {
+      label: label,
+      id: id,
     }
-}
+  ]
+  await csvWriter.writeRecords(record)
+};
 
-const responseSet = await getResponseSet(setId)
+async function getResponses(id) {
+  const ammendUrl = `/response_sets/${id}`
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      'sc-integration-id': 'sc-readme',
+      authorization: `Bearer ${token}`
+    }
+  };
 
-csvWriter.writeRecords(responseSet)
+  const response = await fetch(`${url}${ammendUrl}`,options)
+  if(!response.ok){
+    console.log(`error fetching ${id}...`)
+  } else {
+    const json = await response.json()
+    console.log(`response set ${json.name} fetched successfully!`)
+    return json.responses
+  }
+};
+
+async function main(id) {
+  const payload = await getResponses(id)
+  
+  for (const item of payload) {
+    await writer(item.id,item.label)
+  }
+};
+
+await main(setId)
