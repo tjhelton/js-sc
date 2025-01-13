@@ -1,52 +1,88 @@
-# Create Inspection Schedules In Bulk
+# Bulk Create Schedules
 
-This script creates schedules based on parameters provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each schedule creation.
+The purpose of this script is to create schedule items in bulk. Special care should be taken when editing the payload for these API calls, as the Start Date, Duration, Starting Day, and more can impact how these schedules are created.
 
-## Prerequisites
+## Set up
 
-- Node.js (>= 20.x)
-- Required npm packages:
-  - `fs`
-  - `csv-parser`
-  - `csv-writer`
+Ensure dependencies are installed by running the below command in the directory of the script:
+```bash
+npm i
+```
 
-## Installation
+Create a .env file with `TOKEN` and `USERID` parameters as follows:
+```bash
+TOKEN=35db5156cea46ed...
 
-1. Clone or download this repository.
-2. Navigate to the project directory.
-3. Install the required npm packages:
+USERID=user_...
+```
 
-   ```bash
-   npm i
-   ```
+Use the SafetyCulture Exporter to write schedule data to a database. At the time of this scripts writing, SafetyCulture Exporter CLI `v4.19.2` was used to export to a local Postgres SQL database. Please see the `safetyculture-exporter.yaml` in this repo for the exact export settings needed.
 
-## Configuration
+Once the data is in the database, export the following query results to csv and name the document `schedules.csv`:
 
-1. Replace "TOKEN_HERE" with your SC bearer token 
+```sql
+select
+s.duration,
+s.can_late_submit,
+s.template_id,
+s.description,
+s.recurrence,
+s.from_date,
+sa.type,
+sa.assignee_id,
+s.site_id	
+from schedules s
+join schedule_assignees sa on sa.schedule_id = s.schedule_id
+-- the below where statement is an example of how to filter down query results to a subset of records needing to be created
+-- where s.status = 'FINISHED' and description LIKE '%963640%'
+```
 
-    ```bash
-    const bToken = 'TOKEN_HERE';
-    ```
+The csv should have the following header structure:
 
-## Usage
+```csv
+duration,can_late_submit,template_id,description,recurrence,from_date,type,assignee_id,site_id
+data,data,data...
+```
 
-1. Prepare an input.csv file with the following format:
+Prior to running the script, edit the payload as needed for the use case in `index.mjs` starting at line 32. Bear in mind that changes to any dynamic arguments changed static will have to be accounted for in the arguments passed into the main function.
 
-|description|mustComplete                 |canLateSubmit|recurrence                                   |startTimeHour|startTimeMinute|duration|timezone       |fromDate  |assigneeId                          |assigneeType|documentId                               |documentType|locationId                          |assetId                             |
-|-----------|-----------------------------|-------------|---------------------------------------------|-------------|---------------|--------|---------------|----------|------------------------------------|------------|-----------------------------------------|------------|------------------------------------|------------------------------------|
-|FEP - Monthly Inspection 0.1.1|ONE                          |TRUE         |FREQ=MONTHLY;INTERVAL=1;DTSTART=20240805T130000Z|7            |0              |P25D    |America/Chicago|2024-08-05|ae46484a-f1be-47f6-92d8-681ab80beb99|ROLE        |template_e5b4a7e1d3884939ad1da50fcb2c80c8|TEMPLATE    |3e1084b4-5ce6-4cf2-9df0-88317f44ffa6|3a479eb9-f5f6-485a-991f-60e5e772347d|
-|FEP - One-Off Inspection 0.1.2|ONE                          |TRUE         |FREQ=DAILY;INTERVAL=1;DTSTART=20240805T130000Z;COUNT=1|7            |0              |P3D     |America/Chicago|2024-08-05|ae46484a-f1be-47f6-92d8-681ab80beb99|ROLE        |template_e5b4a7e1d3884939ad1da50fcb2c80c8|TEMPLATE    |3e1084b4-5ce6-4cf2-9df0-88317f44ffa6|db0a0ee2-a3f2-4768-852e-3b1acc9a0e4e|
+Note that `duration` is blank in this script and must be either hard-coded or an argument should be added to the payload and function!
+
+```js
+    const payload = {
+        "must_complete": "ONE",
+        "can_late_submit": Boolean(sub),
+        "start_time": {
+          "hour": "9",
+          "minute": "0"
+        },
+        "document": {
+          "type": "TEMPLATE",
+          "id": template
+        },
+        "status": "ACTIVE",
+        "description": desc,
+        "recurrence": rec,
+        "duration": "P1DT8H",
+        "from_date": new Date(fdate).toISOString(),
+        "assignees": [
+          {
+            "type": atype.toUpperCase(),
+            "id": assignee
+          }
+        ],
+        "location_id": site
+      }
+```
 
 
-2. Run the script:
+## Running the script
 
-    ```bash
-    node index.mjs
-    ```
+Once the set up is complete, run the following command in a terminal:
+`node index.mjs`
 
-3. Check the output.csv file for the status of each schedule:
+## Outputs
 
-|description|mustComplete                 |canLateSubmit|recurrence                                   |startTimeHour|startTimeMinute|duration|timezone       |fromDate  |assigneeId                          |assigneeType|documentId                               |documentType|locationId                          |assetId                             |status |
-|-----------|-----------------------------|-------------|---------------------------------------------|-------------|---------------|--------|---------------|----------|------------------------------------|------------|-----------------------------------------|------------|------------------------------------|------------------------------------|-------|
-|FEP - Monthly Inspection 0.1.1|ONE                          |TRUE         |FREQ=MONTHLY;INTERVAL=1;DTSTART=20240805T130000Z|7            |0              |P25D    |America/Chicago|2024-08-05|ae46484a-f1be-47f6-92d8-681ab80beb99|ROLE        |template_e5b4a7e1d3884939ad1da50fcb2c80c8|TEMPLATE    |3e1084b4-5ce6-4cf2-9df0-88317f44ffa6|3a479eb9-f5f6-485a-991f-60e5e772347d|SUCCESS|
-|FEP - One-Off Inspection 0.1.2|ONE                          |TRUE         |FREQ=DAILY;INTERVAL=1;DTSTART=20240805T130000Z;COUNT=1|7            |0              |P3D     |America/Chicago|2024-08-05|ae46484a-f1be-47f6-92d8-681ab80beb99|ROLE        |template_e5b4a7e1d3884939ad1da50fcb2c80c8|TEMPLATE    |3e1084b4-5ce6-4cf2-9df0-88317f44ffa6|db0a0ee2-a3f2-4768-852e-3b1acc9a0e4e|ERROR  |
+None.
+
+## Additional Comments

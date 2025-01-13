@@ -1,0 +1,58 @@
+access_token: "17c7415f1acfdb0309c1ff8c91098f8e89f3d1db7a523c9efa9eb5cdcea66bed"
+api:
+    proxy_url: ""
+    sheqsy_url: https://app.sheqsy.com
+    tls_cert: ""
+    tls_skip_verify: false
+    url: https://api.safetyculture.io
+    max_concurrency: 10
+csv:
+    max_rows_per_file: 1000000
+db:
+    connection_string: "postgresql://postgres:password@localhost:5432/bridged"
+    dialect: postgres
+    auto_migrate_disabled: false
+export:
+    action:
+        limit: 100
+    asset:
+        limit: 100
+    course:
+        progress:
+            limit: 1000
+            completion_status: COMPLETION_STATUS_UNSPECIFIED
+    incremental: true
+    inspection:
+        archived: "false"
+        completed: "true"
+        included_inactive_items: false
+        limit: 100
+        skip_ids: []
+        web_report_link: private
+    inspection_items:
+        skip_fields: []
+    issue:
+        limit: 100
+    media: false
+    media_path: export/media
+    modified_after: ""
+    time_zone: UTC
+    path: export
+    site:
+        include_deleted: false
+        include_full_hierarchy: true
+    schedule:
+        resume_download: false
+    tables: [schedules, schedule_assignees]
+    template_ids: []
+report:
+    filename_convention: INSPECTION_TITLE
+    format:
+        - PDF
+    preference_id: ""
+    retry_timeout: 15
+sheqsy_company_id: ""
+sheqsy_password: ""
+sheqsy_username: ""
+session:
+    export_type: csv
