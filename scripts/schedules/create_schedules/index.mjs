@@ -46,7 +46,7 @@ async function main(sub, template, desc, rec, fdate, atype, assignee, site) {
         },
         "description": desc,
         "recurrence": rec,
-        "duration": "P22D",//hardcoded
+        "duration": "", //add manually or create an argument.
         "from_date": new Date(fdate).toISOString(),
         "assignees": [
           {
