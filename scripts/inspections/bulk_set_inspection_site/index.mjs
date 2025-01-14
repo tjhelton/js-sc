@@ -1,48 +1,61 @@
-import neatCsv from 'neat-csv'
-import winston from 'winston'
-import fs from 'fs/promises'
+import fs from 'fs/promises';
+import dotenv from 'dotenv';
+import neatCsv from 'neat-csv';
+import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
+dotenv.config()
 
-const logger = winston.createLogger({
-    level:'info',
-    format: winston.format.simple(),
-    transports: [
-        new winston.transports.File({
-            filename:'siteAssignments.log',
-            level:'info'
-        })
-    ]
+const token = process.env.TOKEN
+
+const inputCsvPath = await fs.readFile('input.csv', 'utf8')
+const insProc = await neatCsv(inputCsvPath)
+
+const outputCsvPath = 'output.csv';
+
+const url = 'https://api.safetyculture.io'
+
+const csvWriter = createCsvWriter({
+  path: outputCsvPath,
+  header: [
+    { id: 'id', title: 'id' },
+    { id: 'site', title: 'site' },
+    { id: 'status', title: 'status'}
+  ],
 });
 
-const token = process.argv[2]
+async function writer(id,site,status){
+  const record = [
+    {
+      id: id,
+      site: site,
+      status: status
+    }
+  ]
+  await csvWriter.writeRecords(record)
+};
 
 async function assignSite(inspection, site) {
     console.log(`assigning ${inspection} to ${site}...`)
-    const url = `https://api.safetyculture.io/inspections/v1/inspections/${inspection}/site`
-    const callOptions = {
+    const ammendUrl = `/inspections/v1/inspections/${inspection}/site`
+    const options = {
         method: 'PUT',
         headers: {
             accept: 'application/json',
             'sc-integration-id': 'sc-readme',
             'content-type': 'application/json',
-            authorization: 'Bearer ' + token
+            authorization: `Bearer ${token}`
         },
         body: JSON.stringify({site_id: site})
     }
-    await fetch(url,callOptions)
-    .then((callResponse) => {
-        logger.log('info', `${inspection} || ${site} || ${callResponse.statusText}`)
-    })
-    return
-}
+    const response = await fetch(`${url}${ammendUrl}`,options)
+    if(!response.ok) {
+        console.log(`error setting ${inspection} to site: ${site}`)
+        await writer(inspection,site,response.statusText)
+    } else {
+        console.log(`${inspection} set to site: ${site}`)
+        await writer(inspection,site,response.statusText)
+    }
+};
 
-async function reader(csvFile) {
-    const textData = (await fs.readFile(csvFile)).toString()
-    const csv = await neatCsv(textData)
-    return csv
-}
-
-const inspectionData = await reader('setSite.csv')
-
-for (const row of inspectionData) {
-    await assignSite(row.inspection, row.site)
-}
+for (const row of insProc) {
+    await assignSite(row.id, row.site)
+};

@@ -1,54 +1,39 @@
-# Archive Inspections In Bulk
+# Bulk Archive Inspections
 
-This script archives inspections based on audit IDs provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each archive request.
+The purpose of this script is to bulk archive inspections from a CSV.
 
-## Prerequisites
+## Set up:
 
-- Node.js (>= 20.x)
-- Required npm packages:
-  - `fs`
-  - `csv-parser`
-  - `csv-writer`
+Ensure dependencies are installed by running the below command in the directory of the script:
 
-## Installation
+```bash
+npm i
+```
 
-1. Clone or download this repository.
-2. Navigate to the project directory.
-3. Install the required npm packages:
+Create a .env file with a `TOKEN` parameter as follows:
 
-   ```bash
-   npm i
-   ```
+```bash
+TOKEN=5b1d73376dhy2a92960a0171b...
+```
 
-## Configuration
+Create a `input.csv` in the directory of the script. There must be a column entitled `id`
 
-1. Replace "TOKEN_HERE" with your SC bearer token 
+```csv
+id
+<data>
+<data>
+<data>
+```
 
-    ```bash
-    const bToken = 'TOKEN_HERE';
-    ```
+## Running the script:
 
+Once the set up is complete, run the following command in a terminal:
+`node index.mjs`
 
-## Usage
+## Outputs:
 
-1. Prepare an input.csv file with the following format:
-    
-| auditId |
-|--------|
-| 12345  |
-| 67890  |
+This script will create an `output.csv` with the `status` of the call to archive.
 
-2. Run the script:
+## Additional Comments
 
-    ```bash
-    node index.mjs
-    ```
-
-3. Check the output.csv file for the status of each audit ID:
-
-| auditId | status |
-|--------|--------|
-| 12345  | SUCCESS |
-| 67890  | ERROR  |
-
-
+The `output.csv` from this script can be filtered for failures and renamed to `input.csv` to run the script again. Previously, the archive inspections endpoint with SafetyCulture would throw an error in the event that an archived inspection was passed to this API. Now, a `200` status will return even if the API call didn't actually archive the inspection, as it was already archived.

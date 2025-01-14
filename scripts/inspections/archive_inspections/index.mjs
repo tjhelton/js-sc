@@ -1,64 +1,59 @@
-import fs from 'fs';
-import csv from 'csv-parser';
+import fs from 'fs/promises';
+import dotenv from 'dotenv';
+import neatCsv from 'neat-csv';
 import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
+dotenv.config()
 
-const bToken = 'TOKEN_HERE';
+const token = process.env.TOKEN
 
-const inputCsvPath = 'input.csv';
+const inputCsvPath = await fs.readFile('input.csv', 'utf8')
+const insProc = await neatCsv(inputCsvPath)
+
 const outputCsvPath = 'output.csv';
 
-const processCsv = async () => {
-  const results = [];
+const url = 'https://api.safetyculture.io'
 
-  // Read the CSV file
-  fs.createReadStream(inputCsvPath)
-    .pipe(csv())
-    .on('data', (row) => {
-      results.push(row);
-    })
-    .on('end', async () => {
-      // Process each row
-      for (const row of results) {
-        const auditId = row.auditId;
+const csvWriter = createCsvWriter({
+  path: outputCsvPath,
+  header: [
+    { id: 'id', title: 'id' },
+    { id: 'status', title: 'status'}
+  ],
+});
 
-        const options = {
-          method: 'POST',
-          headers: {
-            accept: 'application/json',
-            'sc-integration-id': 'sc-readme',
-            'content-type': 'application/json',
-            authorization: `Bearer ${bToken}`,
-          },
-        };
-
-        try {
-          const response = await fetch(`https://api.safetyculture.io/inspections/v1/inspections/${auditId}/archive`, options);
-          const data = await response.json();
-
-          if (response.ok) {
-            row.status = 'SUCCESS';
-          } else {
-            row.status = 'ERROR';
-            console.error(`Error for audit ${auditId}: ${data.message}`);
-          }
-        } catch (err) {
-          row.status = 'ERROR';
-          console.error(`Network error for audit ${auditId}:`, err);
-        }
-      }
-
-      // Write the results to a new CSV file
-      const csvWriter = createCsvWriter({
-        path: outputCsvPath,
-        header: [
-          { id: 'auditId', title: 'auditId' },
-          { id: 'status', title: 'status' },
-        ],
-      });
-
-      await csvWriter.writeRecords(results);
-      console.log('CSV file has been processed and saved as output.csv');
-    });
+async function writer(id,status){
+  const record = [
+    {
+      id: id,
+      status: status
+    }
+  ]
+  await csvWriter.writeRecords(record)
 };
 
-processCsv();
+async function archiveIns(ins) {
+  const ammendUrl = `/inspections/v1/inspections/${ins}/archive`
+  const options = {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      'content-type': 'application/json',
+      authorization: `Bearer ${token}`
+    }
+  };
+
+  const response = await fetch(`${url}${ammendUrl}`,options)
+  if(!response.ok) {
+    console.log(`${ins} failed to archive...`)
+    const json = await response.json()
+    await writer(json.inspection_id,response.statusText)
+  } else {
+    console.log(`${ins} archived...`)
+    const json = await response.json()
+    await writer(json.inspection_id,response.statusText)
+  }
+};
+
+for (const row of insProc) {
+  await archiveIns(row.id)
+};
