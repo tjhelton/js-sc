@@ -14,9 +14,9 @@ Create a .env file with a `TOKEN` parameter as follows:
 TOKEN=5b1d73376dhy2a92960a0171b...
 ```
 
-Use the SafetyCulture Exporter to write schedule data to a database. At the time of this scripts writing, SafetyCulture Exporter CLI `v4.18.4` was used to export to a local Postgres SQL database. Please see the `safetyculture-exporter.yaml` in this repo for the exact export settings needed.
+Use the SafetyCulture Exporter to write schedule data to a database. At the time of this scripts writing, SafetyCulture Exporter CLI `v4.19.2` was used to export to a local Postgres SQL database. Please see the `safetyculture-exporter.yaml` in this repo for the exact export settings needed.
 
-Once the data is in the database, export the following query results to csv and name the document `schedules.csv`:
+Once the data is in the database, export the following query results to csv and name the document `input.csv`:
 ```sql
 select
 s.duration,
@@ -40,7 +40,8 @@ schedule_id,can_late_submit,template_id,description,recurrence,from_date,type,as
 data,data,data...
 ```
 
-Prior to running the script, edit the payload as needed for the use case in `index.mjs` starting at line 29. Bear in mind that changes to any dynamic arguments changed static will have to be accounted for in the arguments passed into the main function.
+Prior to running the script, edit the payload as needed for the use case in `index.mjs` in the `main()` function. Bear in mind that changes to any dynamic arguments changed static will have to be accounted for in the arguments passed into the main function.
+
 ```js
     const payload = {
         "must_complete": "ONE",
@@ -76,6 +77,6 @@ Once the set up is complete, run the following command in a terminal:
 
 ## Outputs
 
-None.
+This script generates an `output.csv` with the ids and status of the deletions.
 
 ## Additional Comments

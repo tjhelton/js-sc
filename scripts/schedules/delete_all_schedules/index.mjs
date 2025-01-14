@@ -1,100 +1,93 @@
+import dotenv from 'dotenv'
 import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
+dotenv.config()
 
-const bToken = 'TOKEN_HERE';
-const baseUrl = 'https://api.safetyculture.io';
+const token = process.env.TOKEN
+
+const url = 'https://api.safetyculture.io'
+
 const outputCsvPath = 'output.csv';
 
-// Function to fetch all schedule IDs via pagination
-async function fetchAllScheduleIds(url, options) {
-  let scheduleIds = [];
-  let nextPage = url;
+const csvWriter = createCsvWriter({
+  path: outputCsvPath,
+  header: [
+    { id: 'id', title: 'id' },
+    { id: 'status', title: 'Status'}
+  ],
+});
 
-  try {
-    while (nextPage) {
-      const response = await fetch(nextPage, options);
-      const result = await response.json();
-
-      // Extract schedule IDs from the current page
-      const ids = result.data.map(schedule => schedule.id);
-      scheduleIds = scheduleIds.concat(ids);
-
-      // Handle the next page URL
-      if (result.metadata.next_page) {
-        nextPage = `${baseUrl}${result.metadata.next_page}`; // Ensure full URL
-      } else {
-        nextPage = null;
-      }
+async function writer(id,status){
+  const record = [
+    {
+      id: id,
+      status: status
     }
+  ]
+  await csvWriter.writeRecords(record)
+};
 
-    return scheduleIds;
-  } catch (error) {
-    console.error('Fetch error:', error);
-    return [];
-  }
-}
-
-// Function to delete schedules based on fetched schedule IDs
-const deleteSchedules = async () => {
+//datafeeds for schedules. adjust url params in ammendUrl as needed
+async function fetchAllScheduleIds() {
+  let scheduleIds = []
+  let ammendUrl = `/feed/schedules?show_active=true&show_finished=true&show_paused=true`
   const options = {
     method: 'GET',
     headers: {
       accept: 'application/json',
-      'sc-integration-id': 'sc-readme',
-      authorization: `Bearer ${bToken}`,
-    },
-  };
-
-  // Fetch all schedule IDs
-  const scheduleIds = await fetchAllScheduleIds(
-    `${baseUrl}/feed/schedules?show_active=true`,
-    options
-  );
-
-  const results = [];
-
-  // Process each schedule ID for deletion
-  for (const scheduleId of scheduleIds) {
-    const deleteOptions = {
-      method: 'DELETE',
-      headers: {
-        accept: 'application/json',
-        'sc-integration-id': 'sc-readme',
-        'content-type': 'application/json',
-        authorization: `Bearer ${bToken}`,
-      },
-    };
-
-    try {
-      const response = await fetch(`${baseUrl}/schedules/v1/schedule_items/${scheduleId}`, deleteOptions);
-
-      // Log the full response for debugging
-      const responseText = await response.text();
-
-      if (response.ok) {
-        results.push({ scheduleId, status: 'SUCCESS' });
-        console.log(`SUCCESS for: ${scheduleId}`);
-      } else {
-        results.push({ scheduleId, status: 'ERROR' });
-        console.error(`Error for ${scheduleId}: ${responseText}`);
-      }
-    } catch (err) {
-      results.push({ scheduleId, status: 'ERROR' });
-      console.error(`Network error for ${scheduleId}:`, err);
+      authorization: `Bearer ${token}`
     }
-  }
+  };
+  
+  let iteration = 1
 
-  // Write the results to a new CSV file
-  const csvWriter = createCsvWriter({
-    path: outputCsvPath,
-    header: [
-      { id: 'scheduleId', title: 'scheduleId' },
-      { id: 'status', title: 'status' },
-    ],
-  });
-
-  await csvWriter.writeRecords(results);
-  console.log('CSV file has been processed and saved as output.csv');
+  while (ammendUrl !== null) {
+    console.log(`fetching page ${iteration}...`)
+    const response = await fetch(`${url}${ammendUrl}`, options);
+    if(!response.ok) {
+      console.log(`error fetching page ${iteration}`)
+    } else {
+      const json = await response.json()
+      if (json.data.length > 0) {
+        for(const record of json.data) {
+          scheduleIds.push(record.id)
+        }
+        console.log(`page ${iteration} successfully fetched and added to list!`)
+        iteration++
+        ammendUrl = json.metadata.next_page
+      } else {
+       console.log('There are no schedules that match the url parameter')
+       break
+      }
+    }
+  } console.log(`list complilation complete!`)
+  return scheduleIds
 };
 
-// Run the script
-deleteSchedules();
+async function deleteSchedules(id){
+  const ammendUrl = `/schedules/v1/schedule_items/${id}`
+  const options = {
+    method: 'DELETE',
+    headers: {
+      accept: 'application/json',
+      authorization: `Bearer ${token}`
+    }
+  };
+  const response = await fetch(`${url}${ammendUrl}`,options)
+  if(!response.ok) {
+    console.log(`error deleting ${id}`)
+    await writer(id,response.statusText)
+  } else {
+    console.log(`successfully deleted ${id}`)
+    await writer(id,response.statusText)
+  }
+};
+
+async function main(){
+  const schedules = await fetchAllScheduleIds()
+
+  for(const schedule of schedules) {
+    await deleteSchedules(schedule)
+  }
+};
+
+await main()

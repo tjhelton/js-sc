@@ -1,46 +1,38 @@
-# Delete ALL Schedules In Bulk
+# Bulk Delete All Schedules
 
-This script deletes all schedules that exist in the SC environment. There is no input file as we make a call to the schedules datafeed to return ID values for each schedule. The results are saved in an `output.csv` file, indicating the status of each schedule deletion.
+The purpose of this script is to bulk delete ALL schedule items in a SafetyCulture environment.
 
-## Prerequisites
+## Set up:
 
-- Node.js (>= 20.x)
-- Required npm packages:
-  - `csv-writer`
+Ensure dependencies are installed by running the below command in the directory of the script:
 
-## Installation
+```bash
+npm i
+```
 
-1. Clone or download this repository.
-2. Navigate to the project directory.
-3. Install the required npm packages:
+Create a .env file with a `TOKEN` parameter as follows:
 
-   ```bash
-   npm i
-   ```
+```bash
+TOKEN=5b1d73376dhy2a92960a0171b...
+```
 
-## Configuration
+Consider the `ammendUrl` in this script:
 
-1. Replace "TOKEN_HERE" with your SC bearer token 
+```js
+let ammendUrl = `/feed/schedules?show_active=true&show_finished=true&show_paused=true`
+```
 
-    ```bash
-    const bToken = 'TOKEN_HERE';
-    ```
+The parameters in this URL should be changed depending on what is being targeted for deletion.
 
+## Running the script:
 
-## Usage
+Once the set up is complete, run the following command in a terminal:
+`node index.mjs`
 
-1. Run the script:
+## Outputs:
 
-    ```bash
-    node index.mjs
-    ```
+This script generates an `output.csv` with the ids and status of the deletions.
 
-2. Check the output.csv file for the status of each schedule deletion:
+## Additional Comments
 
-| scheduleId | status |
-|--------|--------|
-| 12345  | SUCCESS |
-| 67890  | ERROR |
-
-
-
+This script does not require any input, as it uses the schedules data feed to get all schedules in an environment.

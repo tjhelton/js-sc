@@ -18,7 +18,7 @@ USERID=user_...
 
 Use the SafetyCulture Exporter to write schedule data to a database. At the time of this scripts writing, SafetyCulture Exporter CLI `v4.19.2` was used to export to a local Postgres SQL database. Please see the `safetyculture-exporter.yaml` in this repo for the exact export settings needed.
 
-Once the data is in the database, export the following query results to csv and name the document `schedules.csv`:
+Once the data is in the database, export the following query results to csv and name the document `input.csv`:
 
 ```sql
 select
@@ -44,7 +44,7 @@ duration,can_late_submit,template_id,description,recurrence,from_date,type,assig
 data,data,data...
 ```
 
-Prior to running the script, edit the payload as needed for the use case in `index.mjs` starting at line 32. Bear in mind that changes to any dynamic arguments changed static will have to be accounted for in the arguments passed into the main function.
+Prior to running the script, edit the payload as needed for the use case in `index.mjs` in the `main()` function. Bear in mind that changes to any dynamic arguments changed static will have to be accounted for in the arguments passed into the main function.
 
 Note that `duration` is blank in this script and must be either hard-coded or an argument should be added to the payload and function!
 
@@ -75,14 +75,13 @@ Note that `duration` is blank in this script and must be either hard-coded or an
       }
 ```
 
-
 ## Running the script
 
 Once the set up is complete, run the following command in a terminal:
 `node index.mjs`
 
-## Outputs
+## Outputs:
 
-None.
+This script generates an `output.csv` with the ids and status of the deletions.
 
 ## Additional Comments

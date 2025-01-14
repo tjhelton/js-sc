@@ -1,54 +1,39 @@
-# Delete Schedules In Bulk
+# Bulk Delete Schedules
 
-This script deletes schedules based on schedule IDs provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each schedule deletion.
+The purpose of this script is to bulk delete schedule items in a SafetyCulture environment.
 
-## Prerequisites
+## Set up:
 
-- Node.js (>= 20.x)
-- Required npm packages:
-  - `fs`
-  - `csv-parser`
-  - `csv-writer`
+Ensure dependencies are installed by running the below command in the directory of the script:
 
-## Installation
+```bash
+npm i
+```
 
-1. Clone or download this repository.
-2. Navigate to the project directory.
-3. Install the required npm packages:
+Create a .env file with a `TOKEN` parameter as follows:
 
-   ```bash
-   npm i
-   ```
+```bash
+TOKEN=5b1d73376dhy2a92960a0171b...
+```
 
-## Configuration
+Create an `input.csv` in the directory of this script, ensuring there is a column entitled `id` containing schedule IDs.
 
-1. Replace "TOKEN_HERE" with your SC bearer token 
+```csv
+id
+<schedule_id>
+<schedule_id>
+<schedule_id>
+```
 
-    ```bash
-    const bToken = 'TOKEN_HERE';
-    ```
+## Running the script:
 
+Once the set up is complete, run the following command in a terminal:
+`node index.mjs`
 
-## Usage
+## Outputs:
 
-1. Prepare an input.csv file with the following format:
-    
-| scheduleId |
-|--------|
-| 12345  |
-| 67890  |
+This script generates an `output.csv` with the ids and status of the deletions.
 
-2. Run the script:
+## Additional Comments
 
-    ```bash
-    node index.mjs
-    ```
-
-3. Check the output.csv file for the status of each schedule deletion:
-
-| scheduleId | status  |
-|--------|---------|
-| 12345  | SUCCESS |
-| 67890  | ERROR   |
-
-
+The output from this script can be filtered for errors and re-named `input.csv` for retries.

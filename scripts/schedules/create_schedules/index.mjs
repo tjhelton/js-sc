@@ -1,13 +1,34 @@
 import neatCsv from 'neat-csv'
 import dotenv from 'dotenv'
 import fs from 'fs/promises'
+import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
 dotenv.config()
 
 const token = process.env.TOKEN
 const url = 'https://api.safetyculture.io/schedules/v1/schedule_items'
 
-const schedules = await fs.readFile('schedules.csv', 'utf8')
+const schedules = await fs.readFile('input.csv', 'utf8')
 const schedCsv = await neatCsv(schedules)
+
+const outputCsvPath = 'output.csv'
+
+const csvWriter = createCsvWriter({
+  path: outputCsvPath,
+  header: [
+    { id: 'id', title: 'id' },
+    { id: 'status', title: 'Status'}
+  ],
+});
+
+async function writer(id,status){
+  const record = [
+    {
+      id: id,
+      status: status
+    }
+  ]
+  await csvWriter.writeRecords(record)
+};
 
 async function createSched(payload) {
   const options = {
@@ -22,9 +43,11 @@ async function createSched(payload) {
       const response = await fetch(url, options)
       const json = await response.json()
       if(!response.ok) {
-        console.log(`error creating ${json.id}: ${response.status}: ${response.statusText}`) 
+        console.log(`error creating ${json.id}: ${response.status}: ${response.statusText}`)
+        await writer(json.id,response.statusText)
       } else {
         console.log(`${json.id} has been created!`)
+        await writer(json.id,response.statusText)
       }
 };
 
