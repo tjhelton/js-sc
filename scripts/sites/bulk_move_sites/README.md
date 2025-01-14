@@ -1,53 +1,45 @@
-# Move Sites to a New Parent In Bulk
+# Bulk Move Sites
 
-This script moves existing sites to a new parent based on the site IDs and new parent IDs provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each site move operation.
+The purpose of this script is to move sites in bulk, either to a new parent - or to have no parent.
 
-## Prerequisites
+## Set up:
 
-- Node.js (>= 20.x)
-- Required npm packages:
-  - `fs`
-  - `csv-parser`
-  - `csv-writer`
+Ensure dependencies are installed by running the below command in the directory of the script:
 
-## Installation
+```bash
+npm i
+```
 
-1. Clone or download this repository.
-2. Navigate to the project directory.
-3. Install the required npm packages:
+Create a .env file with a `TOKEN` parameter as follows:
 
-   ```bash
-   npm i
-   ```
+```bash
+TOKEN=5b1d73376dhy2a92960a0171b...
+```
 
-## Configuration
+Create an `input.csv` in the directory of this script. Include values separated into two columns: `siteId` and `parentId`. This script accounts for a parent location. If a site is not to be nested under another location, the `parentId` can be excluded.
 
-1. Replace "TOKEN_HERE" with your SC bearer token 
+```csv
+siteId,parentId
+<site_id>,<parent_id>
+<site_id>,<left_blank, no parent_id>
+<site_id>,<parent_id>
+```
 
-    ```bash
-    const bToken = 'TOKEN_HERE';
-    ```
+## Running the script:
 
+Once the set up is complete, run the following command in a terminal:
+`node index.mjs`
 
-## Usage
+## Outputs:
 
-1. Prepare an input.csv file with the following format:
-    
-| siteId | parentId |
-|--------|--------|
-| 09876  |  12345 |
-| 67890  | 54321  |
+This script will create an `output.csv` containing the sites created and their relevant statuses.
 
+```csv
+siteId,siteName,newParentId,newParentName,status
+8c736943-89f2-4e71-be31-2f44a15ce23f,gloober8,d6157100-4f2e-4bcb-b923-dbda61a89b98,ballerina level up 1,OK
+8c51f0ef-1cc5-4e56-a299-c736cd8159bb,choober8,orphan,orphan,OK
+```
 
-2. Run the script:
+## Additional Comments
 
-    ```bash
-    node index.mjs
-    ```
-
-3. Check the output.csv file for the status of each moved site:
-
-| siteId | parentId | status  |
-|--------|--------|---------|
-| 09876  | 12345  | SUCCESS |
-| 67890  | 54321 | ERROR   |
+At the time of this writing, a few SafetyCulture endpoints that interact with sites will only accept a `parent_id` in its UUID format. The script accounts for this and accepts both UUID and S12 formats.

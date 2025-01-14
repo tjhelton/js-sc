@@ -1,33 +1,54 @@
 import { writeFileSync } from 'fs';
+import dotenv from 'dotenv'
+dotenv.config()
 
-const token = process.argv[2]
+const token = process.env.TOKEN
 
-async function getSites () {
-    const options = {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          'sc-integration-id': 'sc-readme',
-          authorization: 'Bearer ' + token
+const url = 'https://api.safetyculture.io'
+
+const options = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    'sc-integration-id': 'sc-readme',
+    authorization: `Bearer ${token}`
+  }
+};
+
+function idVal(str) {
+  if (str.includes('location')) {
+    const uuid = str.split('_')[1]
+    return `${uuid.substr(0, 8)}-${uuid.substr(8, 4)}-${uuid.substr(12, 4)}-${uuid.substr(16, 4)}-${uuid.substr(20)}`
+  } else {
+    return str
+  }
+};
+
+async function getAssets() {
+    let sites = []
+    let appendUrl = '/feed/sites'
+    let page = 1
+    while(appendUrl !== null) {
+      const response = await fetch(`${url}${appendUrl}`,options)
+      const json = await response.json()
+      console.log(`fetching page ${page}...`)
+      page++
+      for(const site of json.data) {
+        if(site.meta_label === 'location'){
+          const newId = await idVal(site.id)
+          sites.push(newId)
+        } else {
+          //skip
         }
       }
-    try {
-      const response = await fetch(`https://api.safetyculture.io/feed/sites`,options)
-      if(!response.ok) {
-        throw new Error(`data fetch error! Status: ${response.status}`)
-      }
-      const responseJson = await response.json()
-      return responseJson.data
-    }catch (error) {
-      console.error('Failed to fetch sites:', error)
-      return null
+      appendUrl = json.metadata.next_page
     }
-}
+    return sites
+};
 
 async function main(){
-  const sites = await getSites()
-  const outputArray = sites.map(item => item.id);
-  writeFileSync('sites.json', JSON.stringify(outputArray, null, 2));
-}
+  const sites = await getAssets()
+  writeFileSync('sites.json', JSON.stringify(sites, null, 2));
+};
 
 main()
