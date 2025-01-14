@@ -1,67 +1,55 @@
-import fs from 'fs';
-import csv from 'csv-parser';
+import neatCsv from 'neat-csv'
+import dotenv from 'dotenv'
+import fs from 'fs/promises'
 import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
+dotenv.config()
 
-const bToken = 'TOKEN_HERE';
+const token = process.env.TOKEN
 
-const inputCsvPath = 'input.csv';
+const url = 'https://api.safetyculture.io'
+
+const schedules = await fs.readFile('input.csv', 'utf8')
+const schedCsv = await neatCsv(schedules)
+
 const outputCsvPath = 'output.csv';
 
-const processCsv = async () => {
-  const results = [];
+const csvWriter = createCsvWriter({
+  path: outputCsvPath,
+  header: [
+    { id: 'id', title: 'id' },
+    { id: 'status', title: 'Status'}
+  ],
+});
 
-  // Read the CSV file
-  fs.createReadStream(inputCsvPath)
-    .pipe(csv())
-    .on('data', (row) => {
-      results.push(row);
-    })
-    .on('end', async () => {
-      // Process each row
-      for (const row of results) {
-        const scheduleId = row.scheduleId;
-
-        const options = {
-          method: 'DELETE',
-          headers: {
-            accept: 'application/json',
-            'sc-integration-id': 'sc-readme',
-            'content-type': 'application/json',
-            authorization: `Bearer ${bToken}`,
-          }
-        };
-
-        try {
-          const response = await fetch(`https://api.safetyculture.io/schedules/v1/schedule_items/${scheduleId}`, options);
-
-          // Log the full response for debugging
-          const responseText = await response.text();
-          
-          if (response.ok) {
-            row.status = 'SUCCESS';
-            console.log(`SUCCESS For: ${scheduleId}`);
-          } else {
-            row.status = 'ERROR';
-            console.error(`Error for user ${scheduleId}: ${responseText}`);
-          }
-        } catch (err) {
-          row.status = 'ERROR';
-          console.error(`Network error for user ${scheduleId}:`, err);
-        }
-      }
-
-      // Write the results to a new CSV file
-      const csvWriter = createCsvWriter({
-        path: outputCsvPath,
-        header: [
-          { id: 'scheduleId', title: 'scheduleId' },
-          { id: 'status', title: 'status' },
-        ],
-      });
-
-      await csvWriter.writeRecords(results);
-      console.log('CSV file has been processed and saved as output.csv');
-    });
+async function writer(id,status){
+  const record = [
+    {
+      id: id,
+      status: status
+    }
+  ]
+  await csvWriter.writeRecords(record)
 };
 
-processCsv();
+async function deleteSched(id) {
+  const ammendUrl = `/schedules/v1/schedule_items/${id}`
+  const options = {
+    method: 'DELETE',
+    headers: {
+      accept: 'application/json',
+      authorization: `Bearer ${token}`
+    }
+  };
+      const response = await fetch(`${url}${ammendUrl}`, options)
+      if(!response.ok) {
+        console.log(`error deleting ${id}: ${response.status}: ${response.statusText}`)
+        await writer(id,response.statusText)
+      } else {
+        console.log(`${id} has been deleted!`)
+        await writer(id,response.statusText)
+      }
+};
+
+for (const row of schedCsv) {
+  await deleteSched(row.id)
+};
