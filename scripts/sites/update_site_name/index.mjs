@@ -1,69 +1,98 @@
-import fs from 'fs';
-import csv from 'csv-parser';
+import fs from 'fs/promises';
+import dotenv from 'dotenv';
+import neatCsv from 'neat-csv';
 import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
+dotenv.config()
 
-const bToken = 'TOKEN_HERE';
+const token = process.env.TOKEN
 
-const inputCsvPath = 'input.csv';
+const url = 'https://api.safetyculture.io'
+
+const inputCsvPath = await fs.readFile('input.csv', 'utf8')
+const sitesProc = await neatCsv(inputCsvPath)
+
 const outputCsvPath = 'output.csv';
 
-const processCsv = async () => {
-  const results = [];
+const csvWriter = createCsvWriter({
+  path: outputCsvPath,
+  header: [
+    { id: 'id', title: 'siteId' },
+    { id: 'siteOldName', title: 'siteOldName' },
+    { id: 'siteNewName', title: 'siteNewName' },
+    { id: 'status', title: 'status'}
+  ],
+});
 
-  // Read the CSV file
-  fs.createReadStream(inputCsvPath)
-    .pipe(csv())
-    .on('data', (row) => {
-      results.push(row);
-    })
-    .on('end', async () => {
-      // Process each row
-      for (const row of results) {
-        const siteId = row.siteId;
-        const newName = row.newName;
-
-
-        const options = {
-          method: 'PATCH',
-          headers: {
-            accept: 'application/json',
-            'sc-integration-id': 'sc-readme',
-            'content-type': 'application/json',
-            authorization: `Bearer ${bToken}`,
-          },
-          body: JSON.stringify({name: {val: newName}}),
-        };
-
-        try {
-          const response = await fetch(`https://api.safetyculture.io/directory/v1/folder/${siteId}`, options);
-          const data = await response.json();
-
-          if (response.ok) {
-            row.status = 'SUCCESS';
-            console.log(`${siteId} - ${newName} - SUCCESS`);
-          } else {
-            row.status = 'ERROR';
-            console.error(`Error for auditId ${siteId}: ${data.message}`);
-          }
-        } catch (err) {
-          row.status = 'ERROR';
-          console.error(`Network error for auditId ${siteId}:`, err);
-        }
-      }
-
-      // Write the results to a new CSV file
-      const csvWriter = createCsvWriter({
-        path: outputCsvPath,
-        header: [
-          { id: 'siteId', title: 'siteId' },
-          { id: 'newName', title: 'newName' },
-          { id: 'status', title: 'status' },
-        ],
-      });
-
-      await csvWriter.writeRecords(results);
-      console.log('CSV file has been processed and saved as output.csv');
-    });
+async function writer(siteId,siteOldName,siteNewName,status){
+  const record = [
+    {
+      id: siteId,
+      siteOldName: siteOldName,
+      siteNewName: siteNewName,
+      status: status
+    }
+  ]
+  await csvWriter.writeRecords(record)
 };
 
-processCsv();
+function idVal(str) {
+  if (str.includes('location')) {
+    const uuid = str.split('_')[1]
+    return `${uuid.substr(0, 8)}-${uuid.substr(8, 4)}-${uuid.substr(12, 4)}-${uuid.substr(16, 4)}-${uuid.substr(20)}`
+  } else {
+    return str
+  }
+};
+
+async function getName(id) {
+  const idValidated = await idVal(id)
+  const ammendUrl = `/directory/v1/folder/${idValidated}`
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      authorization: `Bearer ${token}`
+    }
+  };
+
+  const response = await fetch(`${url}${ammendUrl}`, options)
+  if(response.status === '404'){
+    console.log(`${id} not found...`)
+    return 'name not found'
+  } else if (!response.ok) {
+    console.log(`error fetching ${id}`)
+    return 'error fetching name'
+  } else {
+    const json = await response.json()
+    return json.folder.name
+  }
+};
+
+async function changeName(id,newName) {
+  const idValidated = idVal(id)
+  const oldName = await getName(idValidated)
+  const ammendUrl = `/directory/v1/folder/${idValidated}`
+  const options = {
+    method: 'PATCH',
+    headers: {
+      accept: 'application/json',
+      'sc-integration-id': 'sc-readme',
+      'content-type': 'application/json',
+      authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({name: {val: newName}}),
+  };
+  
+  const response = await fetch(`${url}${ammendUrl}`,options)
+  if (!response.ok) {
+    console.log(`error renaming site ${oldName} to ${newName}!`)
+    await writer(id,oldName,newName,response.statusText)
+  } else {
+    console.log(`renamed site ${oldName} to ${newName}!`)
+    await writer(id,oldName,newName,response.statusText)
+  }
+};
+
+for (const site of sitesProc) {
+  await changeName(site.siteId,site.newName)
+};
