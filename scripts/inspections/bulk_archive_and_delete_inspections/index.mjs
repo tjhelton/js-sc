@@ -1,72 +1,87 @@
-import neatCsv from 'neat-csv'
-import fs from 'fs/promises'
-import winston from 'winston'
+import fs from 'fs/promises';
+import dotenv from 'dotenv';
+import neatCsv from 'neat-csv';
+import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
+dotenv.config()
 
-const inspections = (await fs.readFile('inspections.csv')).toString()
-const inspectionsCsv = await neatCsv(inspections)
-const token = process.argv[2]
-const logger = winston.createLogger({
-    level: 'info',
-    format: winston.format.simple(),
-    transports: [
-        new winston.transports.File({
-            filename: 'inspections.log',
-            level: 'info'
-        })
-    ]
-})
+const token = process.env.TOKEN
 
-async function archiveAndDelete(ins) {
-    const getUrl = `https://api.safetyculture.io/audits/${ins}`
-    const options = {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          'sc-integration-id': 'sc-readme',
-          authorization: 'Bearer ' + token
-        }
-      };
-      const deleteUrl = `https://api.safetyculture.io/inspections/v1/inspections/${ins}`
-      const deleteOptions = {
-        method: 'DELETE',
-        headers: {
-          accept: 'application/json',
-          'sc-integration-id': 'sc-readme',
-          authorization: 'Bearer ' + token
-        }
-      };
-      const archiveUrl = `https://api.safetyculture.io/inspections/v1/inspections/${ins}/archive`
-      const archiveOptions = {
-        method: 'POST',
-        headers: {
-          accept: 'application/json',
-          'sc-integration-id': 'sc-readme',
-          'content-type': 'application/json',
-          authorization: 'Bearer ' + token
-        }
-      };
-      await fetch(getUrl,options)
-      .then(response => response.json())
-      .then(async data => {
-        const status = data.archived
-      if (status === true) {
-        console.log(`deleting ${ins}...`)
-        await fetch(deleteUrl,deleteOptions)
-        .then(async response => {
-            logger.log('info',`${ins} | ${response.statusText}`)
-        })
-      } else if (status === false) {
-        console.log(`archiving and deleting ${ins}...`);
-            await fetch(archiveUrl,archiveOptions),
-            await fetch(deleteUrl,deleteOptions)
-            .then(async response => {
-                logger.log('info',`${ins} | ${response.statusText}`)
-            })
-      }
-    })
+const inputCsvPath = await fs.readFile('input.csv', 'utf8')
+const insProc = await neatCsv(inputCsvPath)
+
+const outputCsvPath = 'output.csv';
+
+const url = 'https://api.safetyculture.io'
+
+const csvWriter = createCsvWriter({
+  path: outputCsvPath,
+  header: [
+    { id: 'id', title: 'id' },
+    { id: 'archive', title: 'archive'},
+    { id: 'deletion', title: 'deletion'}
+  ],
+});
+
+async function writer(id,archive,deletion){
+  const record = [
+    {
+      id: id,
+      archive: archive,
+      deletion: deletion
+    }
+  ]
+  await csvWriter.writeRecords(record)
 };
 
-for (const row of inspectionsCsv) {
-    await archiveAndDelete(row.inspections)
-}
+async function archiveIns(ins) {
+  const ammendUrl = `/inspections/v1/inspections/${ins}/archive`
+  const options = {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      'content-type': 'application/json',
+      authorization: `Bearer ${token}`
+    }
+  };
 
+  const response = await fetch(`${url}${ammendUrl}`,options)
+  if(!response.ok) {
+    console.log(`${ins} failed to archive...`)
+    return response.statusText
+  } else {
+    console.log(`${ins} archived...`)
+    return response.statusText
+  }
+};
+
+async function deleteIns(ins) {
+  const ammendUrl = `/inspections/v1/inspections/${ins}`
+  const options = {
+    method: 'DELETE',
+    headers: {
+      accept: 'application/json',
+      'content-type': 'application/json',
+      authorization: `Bearer ${token}`
+    }
+  };
+
+  const response = await fetch(`${url}${ammendUrl}`,options)
+  if(!response.ok) {
+    console.log(`${ins} failed to delete...`)
+    return response.statusText
+  } else {
+    console.log(`${ins} deleted...`)
+    return response.statusText
+  }
+};
+
+async function main (ins) {
+  const archival = await archiveIns(ins)
+  const deletion = await deleteIns(ins)
+
+  await writer(ins,archival,deletion)
+};
+
+for (const row of insProc) {
+  await main(row.id)
+};

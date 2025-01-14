@@ -1,24 +1,39 @@
-# Bulk Set Inspection Owner
-The purpose of this script is to change the owner(s) of several inspections. This leverages SafetyCulture's open API.
+# Bulk Set Owner
+
+The purpose of this script is to set new inspection owners in bulk. Please note that the credentials provided during the API call to change the owner must match the owner of the original inspection in order to properly set the new owner - even for admins.
 
 ## Set up:
+
 Ensure dependencies are installed by running the below command in the directory of the script:
+
 ```bash
 npm i
 ```
-Upload a CSV containing audit IDs and user IDs of the new owner in the same directory that this script is in entitled `inspections.csv`. The CSV should have the following header and data structure:
-```csv
-inspection,user
-<audit_id>,<user_id>
-<audit_id>,<user_id>,
-etc.
+
+Create a .env file with a `TOKEN` parameter as follows:
+
+```bash
+TOKEN=5b1d73376dhy2a92960a0171b...
 ```
 
-## Running the Script:
+Create an `input.csv` in the directory of the the script containing columns entitled `id` and `owner`, with the respective IDs of the inspections and the new owners.
+
+```csv
+id,owner
+<audit_id>,<new_owner_id>
+<audit_id>,<new_owner_id>
+<audit_id>,<new_owner_id>
+```
+
+## Running the script:
+
 Once the set up is complete, run the following command in a terminal:
-`node index.mjs <token>`
+`node index.mjs`
 
 ## Outputs:
-Once the script is complete, a log file entitled `inspectionOwners.log` will be created. Attach the log to the request (Salesforce or Jira) for traceability.
 
-## Notes for / from Ro:
+The script will create an `output.csv` containing the audit ID, new owner ID, and status of the API call to set the new owner.
+
+## Additional Comments
+
+The `output.csv` can be filtered for failures and renamed to `input.csv` for retries.

@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "neat-csv": "^7.0.0",
-    "winston": "^3.15.0"
-  }
-}
