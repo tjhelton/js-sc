@@ -45,13 +45,11 @@ async function archiveIns(ins) {
   const response = await fetch(`${url}${ammendUrl}`,options)
   if(!response.ok) {
     console.log(`${ins} failed to archive...`)
-    const json = await response.json()
-    await writer(json.inspection_id,response.statusText)
   } else {
     console.log(`${ins} archived...`)
-    const json = await response.json()
-    await writer(json.inspection_id,response.statusText)
   }
+  const json = await response.json()
+  await writer(json.inspection_id,response.statusText)
 };
 
 for (const row of insProc) {

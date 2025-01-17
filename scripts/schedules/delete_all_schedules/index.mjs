@@ -75,11 +75,10 @@ async function deleteSchedules(id){
   const response = await fetch(`${url}${ammendUrl}`,options)
   if(!response.ok) {
     console.log(`error deleting ${id}`)
-    await writer(id,response.statusText)
   } else {
     console.log(`successfully deleted ${id}`)
-    await writer(id,response.statusText)
   }
+  await writer(id,response.statusText)
 };
 
 async function main(){

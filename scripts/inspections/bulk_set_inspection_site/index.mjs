@@ -49,11 +49,10 @@ async function assignSite(inspection, site) {
     const response = await fetch(`${url}${ammendUrl}`,options)
     if(!response.ok) {
         console.log(`error setting ${inspection} to site: ${site}`)
-        await writer(inspection,site,response.statusText)
     } else {
         console.log(`${inspection} set to site: ${site}`)
-        await writer(inspection,site,response.statusText)
     }
+    await writer(inspection,site,response.statusText)
 };
 
 for (const row of insProc) {

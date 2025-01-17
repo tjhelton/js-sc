@@ -86,11 +86,10 @@ async function changeName(id,newName) {
   const response = await fetch(`${url}${ammendUrl}`,options)
   if (!response.ok) {
     console.log(`error renaming site ${oldName} to ${newName}!`)
-    await writer(id,oldName,newName,response.statusText)
   } else {
     console.log(`renamed site ${oldName} to ${newName}!`)
-    await writer(id,oldName,newName,response.statusText)
   }
+  await writer(id,oldName,newName,response.statusText)
 };
 
 for (const site of sitesProc) {
