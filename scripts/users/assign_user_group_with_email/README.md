@@ -1,25 +1,37 @@
-# Update User Status/Seat with Emails
-The purpose of this script is to assign users to groups in bulk using just their emails. This script uses SafetyCulture's open API. The script was designed to be faster about actioning this kind of automation for CSMs / AEs, as often they are just providing us with customer email addresses.
+# Bulk Add Users to Groups with Email
+
+The purpose of this script is to bulk add users to groups with their emails and the group IDs, as often customers provide us the data this way.
 
 ## Set up:
+
 Ensure dependencies are installed by running the below command in the directory of the script:
+
 ```bash
 npm i
 ```
-Upload a CSV containing user emails, seat types, and statuses in the same directory that this script is in entitled `userUpdate.csv`. The CSV should have the following header and data structure:
+
+Create a .env file with a `TOKEN` parameter as follows:
+
+```bash
+TOKEN=5b1d73376dhy2a92960a0171b...
+```
+
+Create a `input.csv` in the directory of this script, ensuring there is a `email` and `groupId` column.
+
 ```csv
-user_email,group_id
-<email>,<group_id>
-<email>,<group_id>
-etc.
+email,groupId
+test@boof.net,role_1234,...
 ```
 
 ## Running the script:
+
 Once the set up is complete, run the following command in a terminal:
-`node index.mjs <token>`
+`node index.mjs`
 
 ## Outputs:
-Once the script is complete, a log file entitled `user_updates.log` will be created. Attach the log to the request (Salesforce or Jira) for traceability.
 
-## Notes for / from Ro:
-Bad Requests will happen for users already in the groups. In a future update, I will add clearer logging for CS.
+This file will generate an `output.csv` containing the respective statuses. At the time of this writing, trying to add a user to a group that the user is already in will throw an error.
+
+## Additional Comments
+
+This script can be improved by returning the `data.message` from the initial API call. The `output.csv` can be filtered for failures and retried if neeeded.

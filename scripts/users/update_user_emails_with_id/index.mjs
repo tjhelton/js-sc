@@ -1,36 +1,62 @@
 import fs from 'fs/promises';
+import dotenv from 'dotenv';
 import neatCsv from 'neat-csv';
-import axios from 'axios';
-const token = process.argv[2]
+import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
+dotenv.config()
 
-async function readCsv(csvName) {
-  const csvRaw = (await fs.readFile(csvName)).toString();
-  const csv = await neatCsv(csvRaw);
-  return csv;
-}
+const token = process.env.TOKEN
 
-//axios API function to process the change
-async function setEmail(user,email){
-  const url = `https://api.safetyculture.io/users/${user}`
-  const data = {"new_email": email}
-  const headers = {
+const url = 'https://api.safetyculture.io'
+
+const inputCsvPath = await fs.readFile('input.csv', 'utf8')
+const usersProc = await neatCsv(inputCsvPath)
+
+const outputCsvPath = 'output.csv';
+
+const csvWriter = createCsvWriter({
+  path: outputCsvPath,
+  header: [
+    { id: 'userId', title: 'userId' },
+    { id: 'newEmail', title: 'newEmail' },
+    { id: 'status', title: 'status' }
+  ],
+});
+
+async function writer(user,newEmail,status){
+  const record = [
+    {
+      userId: user,
+      newEmail: newEmail,
+      status: status
+    }
+  ]
+  await csvWriter.writeRecords(record)
+};
+
+async function updateUser(user,newEmail) {
+  const ammendUrl = `/users/${user}`
+  const options = {
+    method: 'PUT',
     headers: {
       accept: 'application/json',
       'sc-integration-id': 'sc-readme',
       'content-type': 'application/json',
-      authorization: 'Bearer ' + token
-    }}
-    await axios.put(url, data, headers)
-    .then(response => {
-      console.log(user + ' updated to ' + email, response.statusText);
+      'authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      new_email: newEmail
     })
-    .catch(error => {
-      console.error(user + ' not updated to ' + email, error.status);
-    });
-}
+  };
 
-const csvData = await readCsv('users.csv');
+  const response = await fetch(`${url}${ammendUrl}`,options)
+  if(!response.ok) {
+    console.log(`error updating ${user} email...`)
+  } else {
+    console.log(`${user} email updated!`)
+  }
+  await writer(user,newEmail,response.statusText)
+};
 
-for (const row of csvData) {
-  await setEmail(row.userId,row.email)
-}
+for (const user of usersProc){
+  await updateUser(user.userId,user.newEmail)
+};

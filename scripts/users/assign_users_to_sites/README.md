@@ -1,56 +1,38 @@
-# Assign Users To Sites In Bulk
+# Bulk Assign Users to Sites
 
-This script assigns users to sites based on user IDs + site IDs provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each site assignment.
+The purpose of this script is to bulk add users to sites as site members with their user IDs.
 
-## Prerequisites
+## Set up:
 
-- Node.js (>= 20.x)
-- Required npm packages:
-  - `fs`
-  - `csv-parser`
-  - `csv-writer`
+Ensure dependencies are installed by running the below command in the directory of the script:
 
-## Installation
+```bash
+npm i
+```
 
-1. Clone or download this repository.
-2. Navigate to the project directory.
-3. Install the required npm packages:
+Create a .env file with a `TOKEN` parameter as follows:
 
-   ```bash
-   npm i
-   ```
+```bash
+TOKEN=5b1d73376dhy2a92960a0171b...
+```
 
-## Configuration
+Create a `input.csv` in the directory of this script, ensuring there is a `userId` and `siteId` column.
 
-1. Replace "TOKEN_HERE" with your SC bearer token 
+```csv
+userId,groupId
+data,data
+data,data
+```
 
-    ```bash
-    const bToken = 'TOKEN_HERE';
-    ```
+## Running the script:
 
+Once the set up is complete, run the following command in a terminal:
+`node index.mjs`
 
-## Usage
+## Outputs:
 
-1. Prepare an input.csv file with the following format:
-    
-| userId | siteId |
-|--------|--------|
-| 12345  | 54321  |
-| 67890  | 09876  |
+This file will generate an `output.csv` containing the respective statuses.
 
+## Additional Comments
 
-2. Run the script:
-
-    ```bash
-    node index.mjs
-    ```
-
-3. Check the output.csv file for the status of each user ID + site ID:
-
-| userId | siteId | status  |
-|--------|--------|---------|
-| 12345  | 54321  | SUCCESS |
-| 67890  | 09876  | ERROR   |
-
-
-
+This script can be improved by returning the `data.message` from the initial API call. The `output.csv` can be filtered for failures and retried if neeeded.

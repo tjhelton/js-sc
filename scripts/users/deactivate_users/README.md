@@ -1,54 +1,39 @@
-# Deactivate Users In Bulk
+# Bulk Deactivate Users
 
-This script deactivates users based on user IDs provided in an `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each deactivation request.
+The purpose of this script is to bulk deactivate users using their user IDs.
 
-## Prerequisites
+## Set up:
 
-- Node.js (>= 20.x)
-- Required npm packages:
-  - `fs`
-  - `csv-parser`
-  - `csv-writer`
+Ensure dependencies are installed by running the below command in the directory of the script:
 
-## Installation
+```bash
+npm i
+```
 
-1. Clone or download this repository.
-2. Navigate to the project directory.
-3. Install the required npm packages:
+Create a .env file with a `TOKEN` parameter as follows:
 
-   ```bash
-   npm i
-   ```
+```bash
+TOKEN=5b1d73376dhy2a92960a0171b...
+```
 
-## Configuration
+Create a `input.csv` in the directory of this script, ensuring there is a `userId` column.
 
-1. Replace "TOKEN_HERE" with your SC bearer token 
+```csv
+userId
+data
+data
+data
+```
 
-    ```bash
-    const bToken = 'TOKEN_HERE';
-    ```
+## Running the script:
 
+Once the set up is complete, run the following command in a terminal:
+`node index.mjs`
 
-## Usage
+## Outputs:
 
-1. Prepare an input.csv file with the following format:
-    
-| userId |
-|--------|
-| 12345  |
-| 67890  |
+This file will generate an `output.csv` containing the respective statuses.
 
-2. Run the script:
+## Additional Comments
 
-    ```bash
-    node index.mjs
-    ```
-
-3. Check the output.csv file for the status of each user ID:
-
-| userId | status  |
-|--------|---------|
-| 12345  | SUCCESS |
-| 67890  | ERROR   |
-
-
+This script can be improved by returning the `data.message` from the initial API call. The `output.csv` can be filtered for failures and retried if neeeded.

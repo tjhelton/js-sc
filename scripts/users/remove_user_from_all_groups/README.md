@@ -1,59 +1,39 @@
-# Remove User From All Groups In Bulk
+# Bulk Deactivate Users
 
-This script removes users provided in the `input.csv` file from all groups of which they may be a member. The results are saved in an `output.csv` file, indicating the status of each user/group removal.
+The purpose of this script is to remove users from all of their current groups.
 
-## Overview
+## Set up:
 
-The script reads user IDs from `input.csv`, retrieves all groups associated with each user, removes the user from those groups via API, and logs the results in `output.csv`.
+Ensure dependencies are installed by running the below command in the directory of the script:
 
-## Prerequisites
+```bash
+npm i
+```
 
-- Node.js (>= 20.x)
-- Required npm packages:
-  - `fs`
-  - `csv-parser`
-  - `csv-writer`
-  - `node-fetch`
+Create a .env file with a `TOKEN` parameter as follows:
 
-## Installation
+```bash
+TOKEN=5b1d73376dhy2a92960a0171b...
+```
 
-1. Clone or download this repository.
-2. Navigate to the project directory.
-3. Install the required npm packages:
+Create a `input.csv` in the directory of this script, ensuring there is a `userId` column.
 
-   ```bash
-   npm i
-   ```
+```csv
+userId
+data
+data
+data
+```
 
-## Configuration
+## Running the script:
 
-1. Replace "TOKEN_HERE" with your SC bearer token 
+Once the set up is complete, run the following command in a terminal:
+`node index.mjs`
 
-    ```bash
-    const bToken = 'TOKEN_HERE';
-    ```
+## Outputs:
 
+This file will generate an `output.csv` containing the respective statuses.
 
-## Usage
+## Additional Comments
 
-1. Prepare an input.csv file with the following format:
-    
-| userId |
-|--------|
-| 12345  |
-| 67890  |
-
-2. Run the script:
-
-    ```bash
-    node index.mjs
-    ```
-
-3. Check the output.csv file for the status of each user ID:
-
-| userId | status  |
-|--------|---------|
-| 12345  | SUCCESS |
-| 67890  | ERROR   |
-
-
+The `output.csv` can be filtered for failures and retried if neeeded.

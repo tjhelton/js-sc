@@ -1,56 +1,38 @@
-# Remove Users From Sites In Bulk
+# Bulk Remove Users from Site Membership
 
-This script removes users from sites based on user IDs + site IDs provided in the `input.csv` file. The results are saved in an `output.csv` file, indicating the status of each site removal.
+The purpose of this script is to remove users from the site memberships of IDs provided.
 
-## Prerequisites
+## Set up:
 
-- Node.js (>= 20.x)
-- Required npm packages:
-  - `fs`
-  - `csv-parser`
-  - `csv-writer`
+Ensure dependencies are installed by running the below command in the directory of the script:
 
-## Installation
+```bash
+npm i
+```
 
-1. Clone or download this repository.
-2. Navigate to the project directory.
-3. Install the required npm packages:
+Create a .env file with a `TOKEN` parameter as follows:
 
-   ```bash
-   npm i
-   ```
+```bash
+TOKEN=5b1d73376dhy2a92960a0171b...
+```
 
-## Configuration
+Create a `input.csv` in the directory of this script, ensuring there is a `userId` column.
 
-1. Replace "TOKEN_HERE" with your SC bearer token 
+```csv
+userId,siteId
+user_f081bc4a552e4a47a33e039be144fa1c,location_3b11619cd73d45f6b667d36a62013391
+f081bc4a-552e-4a47-a33e-039be144fa1c,location_23f2b45ece3544cc83921fa122a2cc67
+```
 
-    ```bash
-    const bToken = 'TOKEN_HERE';
-    ```
+## Running the script:
 
+Once the set up is complete, run the following command in a terminal:
+`node index.mjs`
 
-## Usage
+## Outputs:
 
-1. Prepare an input.csv file with the following format:
-    
-| userId | siteId |
-|--------|--------|
-| 12345  | 54321  |
-| 67890  | 09876  |
+This file will generate an `output.csv` containing the respective statuses.
 
+## Additional Comments
 
-2. Run the script:
-
-    ```bash
-    node index.mjs
-    ```
-
-3. Check the output.csv file for the status of each user ID + site ID:
-
-| userId | siteId | status  |
-|--------|--------|---------|
-| 12345  | 54321  | SUCCESS |
-| 67890  | 09876  | ERROR   |
-
-
-
+The `output.csv` can be filtered for failures and retried if neeeded. This script accepts both `S12` and `UUID` formats in the input.

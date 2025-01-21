@@ -1,68 +1,101 @@
-//SetUp
-import neatCSV from 'neat-csv';
 import fs from 'fs/promises';
-import winston from 'winston';
+import dotenv from 'dotenv';
+import neatCsv from 'neat-csv';
+import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
+dotenv.config()
 
-const logger = winston.createLogger({
-  level:'info',
-  format: winston.format.simple(),
-  transports: [
-    new winston.transports.File({
-      filename: 'user_updates.log',
-      level: 'info'
-  }),
+const token = process.env.TOKEN
+
+const url = 'https://api.safetyculture.io'
+
+const inputCsvPath = await fs.readFile('input.csv', 'utf8')
+const usersProc = await neatCsv(inputCsvPath)
+
+const outputCsvPath = 'output.csv';
+
+const csvWriter = createCsvWriter({
+  path: outputCsvPath,
+  header: [
+    { id: 'email', title: 'email' },
+    { id: 'userId', title: 'userId' },
+    { id: 'seatType', title: 'seatType' },
+    { id: 'status', title: 'status' }
   ],
 });
-const token = process.argv[2]
-//we use the search endpoint to get a user id with an email, then use the update endpoint for that id
-async function updateUsers(email,seatType,status){
-  const searchEndpoint = 'https://api.safetyculture.io/users/search';
-  const searchOptions = {
+
+async function writer(email,userId,seatType,status){
+  const record = [
+    {
+      email: email,
+      userId: userId,
+      seatType: seatType,
+      status: status
+    }
+  ]
+  await csvWriter.writeRecords(record)
+};
+
+async function searchUser(email){
+  const ammendUrl = '/users/search'
+  const options = {
     method: "POST",
     headers: {
       'accept' : 'application/json',
       'content-type': 'application/json',
-      'authorization' : 'Bearer ' + token
+      'authorization' : `Bearer ${token}`
   },
     body: JSON.stringify({'email':[email]})
   };
-  const userEndpoint = 'https://api.safetyculture.io/users/'
-  const userOptions = {
+
+  const response = await fetch(`${url}${ammendUrl}`,options)
+  if(!response.ok) {
+    console.log(`error searching ${email}`)
+    return 'SEARCH FAILED'
+  } else {
+    console.log(`found user ${email}`)
+    const json = await response.json()
+    const userId = json.users[0].id
+    return userId
+  }
+};
+
+async function updateSeat(user,seatType){
+  const ammendUrl = `/users/${user}`
+  const options = {
     method: 'PUT',
     headers: {
       accept: 'application/json',
-      'sc-integration-id': 'sc-readme',
       'content-type': 'application/json',
-      'authorization': 'Bearer ' + token
+      authorization: `Bearer ${token}`
     },
     body: JSON.stringify({
-      seat_type: seatType,
-      status: status
+      // status: 'active',
+      seat_type: seatType
     })
   };
-await fetch (searchEndpoint, searchOptions)
-.then(response => response.json())
-.then(data => {
-  const userId = data.users[0].id
-  const updatedUserEndpoint = userEndpoint + userId;
-return fetch(updatedUserEndpoint, userOptions);
-})
-.then((response) => {
-  logger.log('info', email + " " + response.statusText)
-})
-.catch(error => {
-  logger.log('error', email + " " + error.message);
-});
-};
-//Reads the appropriate CSV in the root of the script location.
-async function reader(csvName) {
-  const csvRaw = (await fs.readFile(csvName)).toString();
-  const csv = await neatCSV(csvRaw);
-  return csv;
-}
-//create user array outside of reader function
-const users = await reader('userUpdate.csv');
 
-for (const row of users) {
-  await updateUsers(row.user_email,row.seat_type,row.status);
+  const response = await fetch(`${url}${ammendUrl}`,options)
+  if(!response.ok){
+    console.log(`error updating ${user} seat to ${seatType}`)
+    return 'ERROR UPDATING SEAT'
+  } else {
+    console.log(`${user} seat updated to ${seatType}`)
+    return 'UPDATED SEAT'
+  }
+};
+
+async function main(email,seatType){
+  const search = await searchUser(email)
+  if(search === 'SEARCH FAILED'){
+    await writer(email,search,seatType,'NOT CHANGED')
+  } else {
+    if(search !== '') {
+      const response = await updateSeat(search,seatType)
+      await writer(email,search,seatType,response)
+    }
+  }
+};
+
+for (const user of usersProc) {
+  await main(user.email,user.seatType)
 };
