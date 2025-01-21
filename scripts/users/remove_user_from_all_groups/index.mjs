@@ -1,93 +1,86 @@
-import fs from 'fs';
-import csv from 'csv-parser';
+import fs from 'fs/promises';
+import dotenv from 'dotenv';
+import neatCsv from 'neat-csv';
 import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
-import fetch from 'node-fetch';
+dotenv.config()
 
-const bToken = 'TOKEN_HERE';
+const token = process.env.TOKEN
 
-const inputCsvPath = 'input.csv';
+const url = 'https://api.safetyculture.io'
+
+const inputCsvPath = await fs.readFile('input.csv', 'utf8')
+const usersProc = await neatCsv(inputCsvPath)
+
 const outputCsvPath = 'output.csv';
 
-const processCsv = async () => {
-  const results = [];
+const csvWriter = createCsvWriter({
+  path: outputCsvPath,
+  header: [
+    { id: 'userId', title: 'userId' },
+    { id: 'status', title: 'status'}
+  ],
+});
 
-  // Read the CSV file
-  fs.createReadStream(inputCsvPath)
-    .pipe(csv())
-    .on('data', (row) => {
-      results.push(row);
-    })
-    .on('end', async () => {
-      // Process each row
-      for (const row of results) {
-        const userId = row.userId;
-
-        // Fetch groups associated with the user
-        try {
-          const groupResponse = await fetch(`https://api.safetyculture.io/accounts/organisation/v1/accounts/user/${userId}/groups`, {
-            method: 'GET',
-            headers: {
-              accept: 'application/json',
-              authorization: `Bearer ${bToken}`,
-              'sc-integration-id': 'sc-readme',
-            },
-          });
-
-          const groupData = await groupResponse.json();
-
-          if (groupResponse.ok && groupData.groups) {
-            // Deactivate the user from each group
-            for (const group of groupData.groups) {
-              try {
-                const deactivateResponse = await fetch(`https://api.safetyculture.io/groups/${group.id}/users/${userId}`, {
-                  method: 'DELETE',
-                  headers: {
-                    accept: 'application/json',
-                    authorization: `Bearer ${bToken}`,
-                    'sc-integration-id': 'sc-readme',
-                  },
-                });
-
-                const deactivateResponseText = await deactivateResponse.text();
-                console.log(`Deactivation response for user ${userId} from group ${group.id}:`, deactivateResponseText);
-
-                if (!deactivateResponse.ok) {
-                  console.error(`Error deactivating user ${userId} from group ${group.id}: ${deactivateResponseText}`);
-                  row.status = 'ERROR';
-                  break;
-                }
-              } catch (err) {
-                console.error(`Network error deactivating user ${userId} from group ${group.id}:`, err);
-                row.status = 'ERROR';
-                break;
-              }
-            }
-
-            if (row.status !== 'ERROR') {
-              row.status = 'SUCCESS';
-            }
-          } else {
-            console.error(`Error fetching groups for user ${userId}:`, groupData);
-            row.status = 'ERROR';
-          }
-        } catch (err) {
-          console.error(`Network error fetching groups for user ${userId}:`, err);
-          row.status = 'ERROR';
-        }
-      }
-
-      // Write the results to a new CSV file
-      const csvWriter = createCsvWriter({
-        path: outputCsvPath,
-        header: [
-          { id: 'userId', title: 'userId' },
-          { id: 'status', title: 'status' },
-        ],
-      });
-
-      await csvWriter.writeRecords(results);
-      console.log('CSV file has been processed and saved as output.csv');
-    });
+async function writer(user, status){
+  const record = [
+    {
+      userId: user,
+      status: status
+    }
+  ]
+  await csvWriter.writeRecords(record)
 };
 
-processCsv();
+async function fetchGroups(user){
+  let groups = []
+  const ammendUrl = `/accounts/organisation/v1/accounts/user/${user}/groups`
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      authorization: `Bearer ${token}`
+    }
+  };
+
+  const response = await fetch(`${url}${ammendUrl}`,options)
+  if(!response.ok) {
+    console.log(`error fetching groups for ${user}`)
+  } else {
+    console.log(`groups fetched for ${user}`)
+    const json = await response.json()
+    for (const group of json.groups) {
+      groups.push(group.id)
+    }
+  }
+  return groups
+};
+
+async function removeGroupMemberShip(user,group){
+  const ammendUrl = `/groups/${group}/users/${user}`
+  const options = {
+    method: 'DELETE',
+    headers: {
+      accept: 'application/json',
+      authorization: `Bearer ${token}`
+    }
+  };
+
+  const response = await fetch(`${url}${ammendUrl}`,options)
+  if(!response.ok) {
+    console.log(`error removing ${user} from ${group}...`)
+  } else {
+    console.log(`${user} removed from ${group}`)
+  }
+};
+
+async function main(user) {
+  const groupList = await fetchGroups(user)
+  for(const group of groupList) {
+    await removeGroupMemberShip(user,group)
+  }
+  await writer(user,'user removed from all groups')
+};
+
+for(const user of usersProc) {
+  await main(user.userId)
+};

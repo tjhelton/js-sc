@@ -1,23 +1,41 @@
-//SetUp
-import neatCSV from 'neat-csv';
 import fs from 'fs/promises';
-import winston from 'winston';
+import dotenv from 'dotenv';
+import neatCsv from 'neat-csv';
+import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
+dotenv.config()
 
-const logger = winston.createLogger({
-  level:'info',
-  format: winston.format.simple(),
-  transports: [
-    new winston.transports.File({
-      filename: 'user_updates.log',
-      level: 'info'
-  }),
+const token = process.env.TOKEN
+
+const url = 'https://api.safetyculture.io'
+
+const inputCsvPath = await fs.readFile('input.csv', 'utf8')
+const usersProc = await neatCsv(inputCsvPath)
+
+const outputCsvPath = 'output.csv';
+
+const csvWriter = createCsvWriter({
+  path: outputCsvPath,
+  header: [
+    { id: 'email', title: 'email' },
+    { id: 'groupId', title: 'groupId' },
+    { id: 'status', title: 'status'}
   ],
 });
-const token = process.argv[2]
-//we use the search endpoint to get a user id with an email, then use the update endpoint for that id
-async function assignGroups(email,groupId){
-  const searchEndpoint = 'https://api.safetyculture.io/users/search';
-  const searchOptions = {
+
+async function writer(email, group, status){
+  const record = [
+    {
+      email: email,
+      groupId: group,
+      status: status
+    }
+  ]
+  await csvWriter.writeRecords(record)
+};
+
+async function searchUser(email) {
+  const ammendUrl = '/users/search';
+  const options = {
     method: "POST",
     headers: {
       'accept' : 'application/json',
@@ -27,46 +45,51 @@ async function assignGroups(email,groupId){
     body: JSON.stringify({'email':[email]})
   };
 
-await fetch (searchEndpoint, searchOptions)
-.then(response => response.json())
-.then(data => {
-  if (data.users[0] === undefined) {
-    logger.log('info', `No user ID found for ${email}`)
+  const response = await fetch(`${url}${ammendUrl}`,options)
+  if (!response.ok) {
+    console.log(`error searching for ${email}`)
+    return 'search error'
   } else {
-  const userId = data.users[0].id
-  const groupEndpoint = `https://api.safetyculture.io/groups/${groupId}/users/v2`
-  const groupOptions = {
+    console.log(`${email}: user found!`)
+    const json = await response.json()
+    const userId = json.users[0].id
+    return userId
+  }
+};
+
+async function groupUsers(user,group) {
+  const ammendUrl = `/groups/${group}/users/v2`
+  const options = {
     method: 'POST',
     headers: {
       accept: 'application/json',
       'sc-integration-id': 'sc-readme',
       'content-type': 'application/json',
-      'authorization': 'Bearer ' + token
+      authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({
-      user_id: userId,
-    })
-  }
-  return fetch(groupEndpoint, groupOptions)
-  .then((response) => {
-    logger.log('info', email + " " + response.statusText)
-  })
-  .catch(error => {
-    logger.log('error', email + " " + error.message);
-  });
-  }
-})
+    body: JSON.stringify({user_id: user}),
+  };
 
+  const response = await fetch(`${url}${ammendUrl}`, options)
+  if (!response.ok) {
+    console.log(`error adding ${user} to ${group}...`)
+    return 'error adding user to group'
+  } else {
+    console.log(`${user} added to ${group}...`)
+    return 'user added to group'
+  }
 };
-//Reads the appropriate CSV in the root of the script location.
-async function reader(csvName) {
-  const csvRaw = (await fs.readFile(csvName)).toString();
-  const csv = await neatCSV(csvRaw);
-  return csv;
-}
-//create user array outside of reader function
-const users = await reader('userUpdate.csv');
 
-for (const row of users) {
-  await assignGroups(row.user_email,row.group_id);
+async function main(email,group) {
+  const userId = await searchUser(email)
+  if(userId === 'search error') {
+    await writer(email,group,'email not found')
+  } else {
+    const response = await groupUsers(userId,group)
+    await writer(email,group,response)
+  }
+};
+
+for(const user of usersProc) {
+  await main(user.email,user.groupId)
 };

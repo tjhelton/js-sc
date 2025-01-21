@@ -1,55 +1,62 @@
-//SetUp
-import neatCSV from 'neat-csv';
 import fs from 'fs/promises';
-import winston from 'winston';
-//Logger
-const logger = winston.createLogger({
-  level:'info',
-  format: winston.format.simple(),
-  transports: [
-    new winston.transports.File({
-      filename: 'user_updates.log',
-      level: 'info'
-  }),
+import dotenv from 'dotenv';
+import neatCsv from 'neat-csv';
+import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
+dotenv.config()
+
+const token = process.env.TOKEN
+
+const url = 'https://api.safetyculture.io'
+
+const inputCsvPath = await fs.readFile('input.csv', 'utf8')
+const usersProc = await neatCsv(inputCsvPath)
+
+const outputCsvPath = 'output.csv';
+
+const csvWriter = createCsvWriter({
+  path: outputCsvPath,
+  header: [
+    { id: 'userId', title: 'userId' },
+    { id: 'seatType', title: 'seatType' },
+    { id: 'status', title: 'status' }
   ],
 });
-const token = process.argv[2]
-//fuunction that searches via email and sets user to inactive
-async function updateUsers(id,seatType,status){
-  const userEndpoint = 'https://api.safetyculture.io/users/'
-  const userOptions = {
+
+async function writer(userId,seatType,status){
+  const record = [
+    {
+      userId: userId,
+      seatType: seatType,
+      status: status
+    }
+  ]
+  await csvWriter.writeRecords(record)
+};
+
+async function updateSeat(user,seatType){
+  const ammendUrl = `/users/${user}`
+  const options = {
     method: 'PUT',
     headers: {
       accept: 'application/json',
-      'sc-integration-id': 'sc-readme',
       'content-type': 'application/json',
-      'authorization': 'Bearer ' + token
+      authorization: `Bearer ${token}`
     },
     body: JSON.stringify({
-      seat_type: seatType,
-      status: status
+      // status: 'active',
+      seat_type: seatType
     })
   };
-  const updatedUserEndpoint = userEndpoint + id;
-  await fetch(updatedUserEndpoint, userOptions)
-.then((response) => {
-  console.log(`updated ${id}!`)
-  logger.log('info', id + " " + response.statusText)
-})
-.catch(error => {
-  logger.log('error', id + " " + error.message);
-});
-}
-;
-//Reads the appropriate CSV in the root of the script location.
-async function reader(csvName) {
-  const csvRaw = (await fs.readFile(csvName)).toString();
-  const csv = await neatCSV(csvRaw);
-  return csv;
-}
-//create user array outside of reader function
-const csv1 = await reader('userUpdate.csv');
-//Performs the JS API function for each user in the CSV.
-for (const row of csv1) {
-  await updateUsers(row.user_id,row.seat_type,row.status);
+
+  const response = await fetch(`${url}${ammendUrl}`,options)
+  if(!response.ok){
+    console.log(`error updating ${user} seat to ${seatType}`)
+  } else {
+    console.log(`${user} seat updated to ${seatType}`)
+  }
+  await writer(user,seatType,response.statusText)
+};
+
+for (const user of usersProc) {
+  await updateSeat(user.userId,user.SeatType)
 };

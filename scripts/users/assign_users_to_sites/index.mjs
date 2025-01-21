@@ -1,68 +1,60 @@
-import fs from 'fs';
-import csv from 'csv-parser';
+import fs from 'fs/promises';
+import dotenv from 'dotenv';
+import neatCsv from 'neat-csv';
 import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
+dotenv.config()
 
-const bToken = 'TOKEN_HERE';
+const token = process.env.TOKEN
 
-const inputCsvPath = 'input.csv';
+const url = 'https://api.safetyculture.io'
+
+const inputCsvPath = await fs.readFile('input.csv', 'utf8')
+const usersProc = await neatCsv(inputCsvPath)
+
 const outputCsvPath = 'output.csv';
 
-const processCsv = async () => {
-  const results = [];
+const csvWriter = createCsvWriter({
+  path: outputCsvPath,
+  header: [
+    { id: 'userId', title: 'userId' },
+    { id: 'siteId', title: 'siteId' },
+    { id: 'status', title: 'status'}
+  ],
+});
 
-  // Read the CSV file
-  fs.createReadStream(inputCsvPath)
-    .pipe(csv())
-    .on('data', (row) => {
-      results.push(row);
-    })
-    .on('end', async () => {
-      // Process each row
-      for (const row of results) {
-        const userId = row.userId;
-        const siteId = row.siteId.toString();
-
-        const options = {
-          method: 'POST',
-          headers: {
-            accept: 'application/json',
-            'sc-integration-id': 'sc-readme',
-            'content-type': 'application/json',
-            authorization: `Bearer ${bToken}`,
-          },
-          body: JSON.stringify({assignments: {[siteId]: {user_ids: [userId]}}})
-        };
-
-        try {
-          const response = await fetch('https://api.safetyculture.io/directory/v1/users/folders/membership', options);
-          const data = await response.json();
-
-          if (response.ok) {
-            console.log(`${userId} : SUCCESS`);
-            row.status = 'SUCCESS';
-          } else {
-            row.status = 'ERROR';
-            console.error(`Error for user ${userId}, ${siteId}: ${data.message}`);
-          }
-        } catch (err) {
-          row.status = 'ERROR';
-          console.error(`Network error for user ${userId}:`, err);
-        }
-      }
-
-      // Write the results to a new CSV file
-      const csvWriter = createCsvWriter({
-        path: outputCsvPath,
-        header: [
-          { id: 'userId', title: 'userId' },
-          { id: 'siteId', title: 'siteId' },
-          { id: 'status', title: 'status' },
-        ],
-      });
-
-      await csvWriter.writeRecords(results);
-      console.log('CSV file has been processed and saved as output.csv');
-    });
+async function writer(user, site, status){
+  const record = [
+    {
+      userId: user,
+      siteId: site,
+      status: status
+    }
+  ]
+  await csvWriter.writeRecords(record)
 };
 
-processCsv();
+async function addUser(user,site) {
+  const ammendUrl = '/directory/v1/users/folders/membership'
+  const options = {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      'sc-integration-id': 'sc-readme',
+      'content-type': 'application/json',
+      authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({assignments: {[site]: {user_ids: [user]}}})
+  };
+
+  const response = await fetch(`${url}${ammendUrl}`,options)
+  if(!response.ok) {
+    console.log(`error adding ${user} to ${site}`)
+  } else {
+    console.log(`${user} added to ${site}`)
+  }
+  await writer(user,site,response.statusText)
+};
+
+for(const user of usersProc) {
+  await addUser(user.userId,user.siteId)
+};

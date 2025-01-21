@@ -1,23 +1,41 @@
-//SetUp
-import neatCSV from 'neat-csv';
 import fs from 'fs/promises';
-import winston from 'winston';
+import dotenv from 'dotenv';
+import neatCsv from 'neat-csv';
+import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
+dotenv.config()
 
-const logger = winston.createLogger({
-  level:'info',
-  format: winston.format.simple(),
-  transports: [
-    new winston.transports.File({
-      filename: 'user_updates.log',
-      level: 'info'
-  }),
+const token = process.env.TOKEN
+
+const url = 'https://api.safetyculture.io'
+
+const inputCsvPath = await fs.readFile('input.csv', 'utf8')
+const usersProc = await neatCsv(inputCsvPath)
+
+const outputCsvPath = 'output.csv';
+
+const csvWriter = createCsvWriter({
+  path: outputCsvPath,
+  header: [
+    { id: 'oldEmail', title: 'oldEmail' },
+    { id: 'newEmail', title: 'newEmail' },
+    { id: 'status', title: 'status' }
   ],
 });
-const token = process.argv[2]
-//we use the search endpoint to get a user id with an email, then use the update endpoint for that id
-async function updateUsers(email,newEmail){
-  const searchEndpoint = 'https://api.safetyculture.io/users/search';
-  const searchOptions = {
+
+async function writer(oldEmail,newEmail, status){
+  const record = [
+    {
+      oldEmail: oldEmail,
+      newEmail: newEmail,
+      status: status
+    }
+  ]
+  await csvWriter.writeRecords(record)
+};
+
+async function searchUser(email) {
+  const ammendUrl = '/users/search';
+  const options = {
     method: "POST",
     headers: {
       'accept' : 'application/json',
@@ -26,8 +44,22 @@ async function updateUsers(email,newEmail){
   },
     body: JSON.stringify({'email':[email]})
   };
-  const userEndpoint = 'https://api.safetyculture.io/users/'
-  const userOptions = {
+
+  const response = await fetch(`${url}${ammendUrl}`,options)
+  const json = await response.json()
+  const userId = json.users[0].id
+  if (userId !== null) {
+    console.log(`error searching for ${email}`)
+    return 'search error'
+  } else {
+    console.log(`${email}: user found!`)
+    return userId
+  }
+};
+
+async function updateUser(user,newEmail) {
+  const ammendUrl = `/users/${user}`
+  const options = {
     method: 'PUT',
     headers: {
       accept: 'application/json',
@@ -39,33 +71,28 @@ async function updateUsers(email,newEmail){
       new_email: newEmail
     })
   };
-await fetch (searchEndpoint, searchOptions)
-.then(response => response.json())
-.then(data => {
-  if (data.users[0] === undefined) {
-    logger.log('info', `No user ID found for ${email}...`)
-  } else {
-    const userId = data.users[0].id
-    const updatedUserEndpoint = userEndpoint + userId;
-    return fetch(updatedUserEndpoint, userOptions)
-    .then((response) => {
-      logger.log('info', email + " " + 'changed to ' + newEmail + ' ' + response.statusText)
-    })
-    .catch(error => {
-      logger.log('error', email + " " + error.message);
-    });
-  }
-})
-};
-//Reads the appropriate CSV in the root of the script location.
-async function reader(csvName) {
-  const csvRaw = (await fs.readFile(csvName)).toString();
-  const csv = await neatCSV(csvRaw);
-  return csv;
-}
-//create user array outside of reader function
-const users = await reader('userUpdate.csv');
 
-for (const row of users) {
-  await updateUsers(row.email,row.new_email);
+  const response = await fetch(`${url}${ammendUrl}`,options)
+  if(!response.ok) {
+    console.log(`error updating user email...`)
+    return 'FAIL'
+  } else {
+    console.log(`${user} email updated!`)
+    return 'SUCCESS'
+  }
+};
+
+async function main(oldEmail,newEmail) {
+  const searchedUser = await searchUser(oldEmail)
+  if(searchedUser === 'search error') {
+    console.log(`error searching for ${oldEmail}`)
+    await writer(oldEmail,newEmail,'Old email not found...')
+  } else {
+    const updateStatus = await updateUser(searchedUser,newEmail)
+    await writer(oldEmail,newEmail,updateStatus)
+  }
+};
+
+for (const user of usersProc){
+  await main(user.oldEmail,user.newEmail)
 };
