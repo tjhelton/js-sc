@@ -43,11 +43,10 @@ async function deleteSched(id) {
       const response = await fetch(`${url}${ammendUrl}`, options)
       if(!response.ok) {
         console.log(`error deleting ${id}: ${response.status}: ${response.statusText}`)
-        await writer(id,response.statusText)
       } else {
         console.log(`${id} has been deleted!`)
-        await writer(id,response.statusText)
       }
+      await writer(id,response.statusText)
 };
 
 for (const row of schedCsv) {

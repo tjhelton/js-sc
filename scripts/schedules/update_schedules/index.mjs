@@ -43,11 +43,10 @@ async function updateSched(id, payload) { //copied from sc docs, to be improved 
       const response = await fetch(`${url}${id}`, options)
       if(!response.ok) {
         console.log(`error updating ${id}...`)
-        await writer(id,response.statusText)
       } else {
         console.log(`updated ${id}...`)
-        await writer(id,response.statusText)
       }
+      await writer(id,response.statusText)
 };
 
 async function main(id, sub, template, desc, rec, fdate, atype, assignee, site) {

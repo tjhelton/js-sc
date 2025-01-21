@@ -55,16 +55,16 @@ async function writer(id,label,status){
     }
   ]
   await csvWriter.writeRecords(record)
-}
+};
 
 async function main(row){
   const { labelId, labelName, status } = await addLabel(row)
   await writer(labelId,labelName,status)
   console.log(`action label ${row} status: ${status}`)
-}
+};
 
 for (const row of labelsProc) {
   await main(row.labelName)
-}
+};
 
 console.log('rows processed. see output.csv')

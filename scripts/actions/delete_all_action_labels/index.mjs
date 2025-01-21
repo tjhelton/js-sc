@@ -32,7 +32,7 @@ async function writer(id,label,status){
     }
   ]
   await csvWriter.writeRecords(record)
-}
+};
 
 async function getLabels() {
   const actionLabels = []
@@ -45,7 +45,7 @@ async function getLabels() {
     actionLabels.push(label.label_id)
   }
   return actionLabels
-}
+};
 
 async function deleteLabels() {
   const list = await getLabels()
@@ -63,10 +63,10 @@ async function deleteLabels() {
     } else {
       console.log('deletion successful')
     }
-}
+};
 
 async function main() {
   await deleteLabels()
-}
+};
 
 main()
