@@ -74,11 +74,13 @@ async function deleteSchedules(id){
   };
   const response = await fetch(`${url}${ammendUrl}`,options)
   if(!response.ok) {
+    const json = await response.json()
     console.log(`error deleting ${id}`)
+    await writer(id,json.message)
   } else {
     console.log(`successfully deleted ${id}`)
+    await writer(id,response.statusText)
   }
-  await writer(id,response.statusText)
 };
 
 async function main(){

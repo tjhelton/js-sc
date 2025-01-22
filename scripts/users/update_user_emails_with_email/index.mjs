@@ -48,7 +48,7 @@ async function searchUser(email) {
   const response = await fetch(`${url}${ammendUrl}`,options)
   const json = await response.json()
   const userId = json.users[0].id
-  if (userId !== null) {
+  if (userId === null) {
     console.log(`error searching for ${email}`)
     return 'search error'
   } else {
@@ -74,8 +74,9 @@ async function updateUser(user,newEmail) {
 
   const response = await fetch(`${url}${ammendUrl}`,options)
   if(!response.ok) {
+    const json = await response.json()
     console.log(`error updating user email...`)
-    return 'FAIL'
+    return json.message
   } else {
     console.log(`${user} email updated!`)
     return 'SUCCESS'

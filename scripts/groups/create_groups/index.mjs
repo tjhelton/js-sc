@@ -45,11 +45,11 @@ async function createGroups(name) {
     body: JSON.stringify({name: name})
   };
   const response = await fetch(`${url}${ammendUrl}`,options)
+  const json = await response.json()
   if(!response.ok) {
     console.log(`error creating group ${name}`)
-    await writer(name,'no id',response.statusText)
+    await writer(name,'no id',json.message)
   } else {
-    const json = await response.json()
     console.log(`group ${name} created with ${json.id}`)
     await writer(name,`${json.id}`,response.statusText)
   }

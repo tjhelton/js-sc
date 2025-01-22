@@ -88,15 +88,15 @@ async function createSites(siteName,parentId){
   };
 
   const response = await fetch(`${url}${ammendUrl}`,options)
+  const json = await response.json()
   if(!response.ok) {
     console.log(`error creating site ${siteName}`)
+    await writer('error',siteName,'error','error',json.message)
   } else if (!parentId) {
-    const json = await response.json()
     const siteId = json.folder.id
     await writer(siteId,siteName,'no parent','no parent',response.statusText)
     console.log(`successfully created ${siteName}!`)
   } else {
-    const json = await response.json()
     const siteId = json.folder.id
     const parentName = await getName(parentId)
     await writer(siteId,siteName,parentIdV,parentName,response.statusText)

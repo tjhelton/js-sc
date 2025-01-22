@@ -18,17 +18,15 @@ const csvWriter = createCsvWriter({
   path: outputCsvPath,
   header: [
     { id: 'id', title: 'labelId' },
-    { id: 'name', title: 'labelName' },
-    { id: 'status', title: 'status'}
+    { id: 'name', title: 'labelName' }
   ],
 });
 
-async function writer(id,label,status){
+async function writer(id,label){
   const record = [
     {
       name: label,
-      id: id,
-      status: status
+      id: id
     }
   ]
   await csvWriter.writeRecords(record)

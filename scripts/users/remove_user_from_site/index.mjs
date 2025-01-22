@@ -55,11 +55,13 @@ async function removeMembership(user,site) {
 
   const response = await fetch(`${url}${ammendUrl}`,options)
   if(!response.ok) {
+    const json = await response.json()
     console.log(`error removing ${newUser} from ${site}`) 
+    await writer(newUser,site,json.message)
   } else {
     console.log(`removed ${newUser} from ${site}`)
+    await writer(newUser,site,response.statusText)
   }
-  await writer(newUser,site,response.statusText)
 };
 
 for(const user of usersProc) {

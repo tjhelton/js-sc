@@ -72,8 +72,9 @@ async function groupUsers(user,group) {
 
   const response = await fetch(`${url}${ammendUrl}`, options)
   if (!response.ok) {
+    const json = await response.json()
     console.log(`error adding ${user} to ${group}...`)
-    return 'error adding user to group'
+    return json.message
   } else {
     console.log(`${user} added to ${group}...`)
     return 'user added to group'

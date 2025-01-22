@@ -50,11 +50,13 @@ async function updateUser(user,newEmail) {
 
   const response = await fetch(`${url}${ammendUrl}`,options)
   if(!response.ok) {
+    const json = await response.json()
     console.log(`error updating ${user} email...`)
+    await writer(user,newEmail,json.message)
   } else {
     console.log(`${user} email updated!`)
+    await writer(user,newEmail,response.statusText)
   }
-  await writer(user,newEmail,response.statusText)
 };
 
 for (const user of usersProc){

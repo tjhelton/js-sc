@@ -88,8 +88,10 @@ async function moveSites(siteId,parentId){
   };
 
   const response = await fetch(`${url}${ammendUrl}`,options)
+  const json = await response.json()
   if(!response.ok) {
     console.log(`error moving site!`)
+    await writer(siteId,'move error',parentId,'move error',json.message)
   } else if (!parentId) {
     const siteName = await getName(siteIdV)
     await writer(siteId,siteName,'orphan','orphan',response.statusText)

@@ -48,10 +48,12 @@ async function setInspectionOwner(inspection, user) {
     const response = await fetch(`${url}${ammendUrl}`,options)
     if(!response.ok) {
         console.log(`error setting owner!`)
+        const json = response.json()
+        await writer(inspection,user,json.message)
     } else {
         console.log(`owner set!`)
+        await writer(inspection,user,response.statusText)
     }
-    await writer(inspection,user,response.statusText)
 };
 
 for (const row of insProc) {

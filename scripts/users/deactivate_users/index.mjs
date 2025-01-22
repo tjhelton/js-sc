@@ -46,11 +46,13 @@ async function deactivateUsers(user){
 
   const response = await fetch(`${url}${ammendUrl}`,options)
   if(!response.ok) {
+    const json = await response.json()
     console.log(`error deactivating ${user}`)
+    await writer(user,json.message)
   } else {
     console.log(`${user} deactivated!`)
+    await writer(user,response.statusText)
   }
-  await writer(user,response.statusText)
 };
 
 for(const user of usersProc) {
