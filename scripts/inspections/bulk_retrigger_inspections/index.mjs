@@ -73,7 +73,7 @@ async function main(audit) {
         const unarchiveStep = await unarchive(audit)
         if(unarchiveStep !== "OK") {
             console.log(`failed to unarchive ${audit}!`)
-            await writer(audit,archiveStep,'Archive succeeded. This record must be unarchived.')
+            await writer(audit,archiveStep,'Archive succeeded. Unarchive failed, this record must be unarchived.')
         } else {
             console.log(`${audit} unarchived! Retrigger complete.`)
             await writer(audit,archiveStep,unarchiveStep)

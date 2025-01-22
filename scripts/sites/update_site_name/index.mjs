@@ -84,12 +84,14 @@ async function changeName(id,newName) {
   };
   
   const response = await fetch(`${url}${ammendUrl}`,options)
+  const json = await response.json()
   if (!response.ok) {
     console.log(`error renaming site ${oldName} to ${newName}!`)
+    await writer(id,oldName,newName,json.message)
   } else {
     console.log(`renamed site ${oldName} to ${newName}!`)
-  }
-  await writer(id,oldName,newName,response.statusText)
+    await writer(id,oldName,newName,response.statusText)
+  } 
 };
 
 for (const site of sitesProc) {

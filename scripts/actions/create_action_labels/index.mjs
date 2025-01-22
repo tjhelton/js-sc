@@ -42,8 +42,11 @@ async function addLabel(label) {
   };
 
   const response = await fetch('https://api.safetyculture.io/tasks/v1/customer_configuration/action_labels/upsert', options)
+  if(!response.ok) {
+    const json = await response.json()
+    return { labelId, labelName, status: json.message } 
+  }
   return { labelId, labelName, status: response.statusText }
-
 };
 
 async function writer(id,label,status){

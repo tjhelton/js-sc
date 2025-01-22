@@ -56,11 +56,13 @@ async function setSite(asset, site) {
 
   const response = await fetch(`${url}${appendUrl}`,options)
   if(!response.ok) {
+    const json = await response.json()
     console.log(`call to set action: ${asset} to location: ${siteV} failed`)
+    await writer(asset,siteV,json.message)
   } else {
     console.log(`${asset} successfully set to ${siteV}`)
+    await writer(asset,siteV,response.statusText)
   }
-  await writer(asset,siteV,response.statusText)
 };
 
 for (const row of assetsCsv) {

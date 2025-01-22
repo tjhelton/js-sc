@@ -47,7 +47,8 @@ async function archiveAsset(asset){
 
   const response = await fetch(`${url}${ammendUrl}`,options)
   if(!response.ok){
-    await writer(asset,response.statusText,'archive failed. record skipped.')
+    const json = await response.json()
+    await writer(asset,json.message,'archive failed. record skipped.')
     console.log(`${asset} archive failed. skipping this record...`)
     return 'fail'
   } else {
@@ -69,7 +70,8 @@ async function deleteAsset(asset) {
 
   const response = await fetch(`${url}${ammendUrl}`,options)
   if(!response.ok){
-    await writer(asset,response.statusText,'archive successful. deletion failed.')
+    const json = await response.json()
+    await writer(asset,json.message,'archive successful. deletion failed.')
     console.log(`${asset} deletion failed...`)
   } else {
     await writer(asset,response.statusText,'asset successfully deleted.')
@@ -78,11 +80,9 @@ async function deleteAsset(asset) {
 };
 
 async function main(row) {
-  const archive = await archiveAsset(row)
-  if(archive === 'archived') {
-    await deleteAsset(row)
-  } else {
-    //skip row
+  const archive = await archiveAsset(row);
+  if (archive === 'archived') {
+    await deleteAsset(row);
   }
 };
 

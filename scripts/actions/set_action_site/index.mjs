@@ -56,10 +56,12 @@ async function setSite(action, site) {
   const response = await fetch(`${url}${appendUrl}`,options)
   if(!response.ok) {
     console.log(`call to set action: ${action} to location: ${siteV} failed`)
+    const json = await response.json()
+    await writer(action,siteV,json.message)
   } else {
     console.log(`${action} successfully set to ${siteV}`)
+    await writer(action,siteV,response.statusText)
   }
-  await writer(action,siteV,response.statusText)
 };
 
 for (const row of actionsCsv) {

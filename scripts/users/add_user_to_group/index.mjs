@@ -49,10 +49,12 @@ async function groupUsers(user,group) {
   const response = await fetch(`${url}${ammendUrl}`, options)
   if (!response.ok) {
     console.log(`error adding ${user} to ${group}...`)
+    const json = await response.json()
+    await writer(user,group,json.message)
   } else {
     console.log(`${user} added to ${group}...`)
+    await writer(user,group,response.statusText)
   }
-  await writer(user,group,response.statusText)
 };
 
 for (const row of usersProc) {

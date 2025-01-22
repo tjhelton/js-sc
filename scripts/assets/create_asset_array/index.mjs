@@ -27,8 +27,6 @@ async function getAssets() {
       for(const asset of json.data) {
         if(asset.state !== 'ASSET_STATE_ARCHIVED'){
           assets.push(asset.id)
-        } else {
-          //skip
         }
       }
       appendUrl = json.metadata.next_page

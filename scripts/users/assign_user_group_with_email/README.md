@@ -34,4 +34,4 @@ This file will generate an `output.csv` containing the respective statuses. At t
 
 ## Additional Comments
 
-This script can be improved by returning the `data.message` from the initial API call. The `output.csv` can be filtered for failures and retried if neeeded.
+The `output.csv` can be filtered for failures and retried if neeeded.

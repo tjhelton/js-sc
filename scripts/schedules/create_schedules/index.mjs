@@ -44,10 +44,11 @@ async function createSched(payload) {
       const json = await response.json()
       if(!response.ok) {
         console.log(`error creating ${json.id}: ${response.status}: ${response.statusText}`)
+        await writer(json.id,json.message)
       } else {
         console.log(`${json.id} has been created!`)
+        await writer(json.id,response.statusText)
       }
-      await writer(json.id,response.statusText)
 };
 
 async function main(sub, template, desc, rec, fdate, atype, assignee, site) {

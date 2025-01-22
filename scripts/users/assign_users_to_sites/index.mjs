@@ -48,11 +48,13 @@ async function addUser(user,site) {
 
   const response = await fetch(`${url}${ammendUrl}`,options)
   if(!response.ok) {
+    const json = await response.json()
     console.log(`error adding ${user} to ${site}`)
+    await writer(user,site,json.message)
   } else {
     console.log(`${user} added to ${site}`)
+    await writer(user,site,response.statusText)
   }
-  await writer(user,site,response.statusText)
 };
 
 for(const user of usersProc) {
