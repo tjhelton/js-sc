@@ -10,7 +10,7 @@ Ensure dependencies are installed by running the below command in the directory 
 npm i
 ```
 
-Create a .env file with a `TOKEN` parameter as follows:
+Create a .env file with a `TOKEN` as follows:
 
 ```bash
 TOKEN=5b1d73376dhy2a92960a0171b...
@@ -20,7 +20,6 @@ Create a `input.csv` in the directory of this script, ensuring there is a `userI
 
 ```csv
 userId
-data
 data
 data
 ```
@@ -36,4 +35,4 @@ This file will generate an `output.csv` containing the respective statuses.
 
 ## Additional Comments
 
-The `output.csv` can be filtered for failures and retried if neeeded.
+The `output.csv` can be filtered for failures and renamed to `input.csv` for retries as needed.
