@@ -31,7 +31,7 @@ async function writer(user, status){
   await csvWriter.writeRecords(record)
 };
 
-async function deactivateUsers(user){
+async function deactivateUser(user){
   const ammendUrl = `/users/${user}`
   const options = {
     method: 'PUT',
@@ -41,7 +41,11 @@ async function deactivateUsers(user){
       'content-type': 'application/json',
       authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ status: "inactive", seat_type: "full" }),
+    body: JSON.stringify(
+      {
+        status: 'inactive'
+      }
+    ),
   };
 
   const response = await fetch(`${url}${ammendUrl}`,options)
@@ -56,5 +60,5 @@ async function deactivateUsers(user){
 };
 
 for(const user of usersProc) {
-  await deactivateUsers(user.userId)
+  await deactivateUser(user.userId)
 };
