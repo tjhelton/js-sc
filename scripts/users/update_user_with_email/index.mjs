@@ -13,6 +13,15 @@ const usersProc = await neatCsv(inputCsvPath)
 
 const outputCsvPath = 'output.csv';
 
+//change messaging as needed, leave keys - as they are used in logic
+const messages = {
+    searchSuccess: 'found user',
+    searchFail: 'user not found',
+    updateSucces: 'user updated',
+    updateFail: 'user not updated'
+};
+
+//change parameters according to what needs to be logged
 const csvWriter = createCsvWriter({
   path: outputCsvPath,
   header: [
@@ -23,6 +32,7 @@ const csvWriter = createCsvWriter({
   ],
 });
 
+//change record keys and function args in accordance with csvWriter
 async function writer(email,userId,seatType,status){
   const record = [
     {
@@ -50,7 +60,7 @@ async function searchUser(email){
   const response = await fetch(`${url}${ammendUrl}`,options)
   if(!response.ok) {
     console.log(`error searching ${email}`)
-    return 'SEARCH FAILED'
+    return messages.searchFail
   } else {
     console.log(`found user ${email}`)
     const json = await response.json()
@@ -59,7 +69,7 @@ async function searchUser(email){
   }
 };
 
-async function updateSeat(user,seatType){
+async function updateUser(user,seatType){//change args based on onjective
   const ammendUrl = `/users/${user}`
   const options = {
     method: 'PUT',
@@ -68,34 +78,34 @@ async function updateSeat(user,seatType){
       'content-type': 'application/json',
       authorization: `Bearer ${token}`
     },
-    body: JSON.stringify({
-      seat_type: seatType
+    body: JSON.stringify({//change payload based on objective
+      status: seatType
     })
   };
 
   const response = await fetch(`${url}${ammendUrl}`,options)
   if(!response.ok){
     const json = await response.json()
-    console.log(`error updating ${user} seat to ${seatType}`)
+    console.log(`${messages.updateFail}: ${json.message}`)
     return json.message
   } else {
-    console.log(`${user} seat updated to ${seatType}`)
-    return 'UPDATED SEAT'
+    console.log(`${messages.updateSucces}: [custom messaging]`)
+    return messages.updateSucces
   }
 };
 
-async function main(email,seatType){
+async function main(email,seatType){//change based on args
   const search = await searchUser(email)
-  if(search === 'SEARCH FAILED'){
-    await writer(email,search,seatType,'NOT CHANGED')
+  if(search === messages.searchFail){
+    await writer(email,search,seatType,'NOT CHANGED') //change based on other args
   } else {
     if(search !== '') {
-      const response = await updateSeat(search,seatType)
-      await writer(email,search,seatType,response)
+      const response = await updateUser(search,seatType)//change based on other args
+      await writer(email,search,seatType,response) //change based on other args
     }
   }
 };
 
 for (const user of usersProc) {
-  await main(user.email,user.seatType)
+  await main(user.email,user.seatType) //change based on input.csv
 };
