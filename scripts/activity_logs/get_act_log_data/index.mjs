@@ -3,7 +3,7 @@ import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
 dotenv.config() 
 
 //change activity types as needed
-const activityTypes = ['action.delete_action_label', 'action.create_action_label']
+const activityTypes = ['org.users_added', 'org.update_user_seat_type']
 
 const outputCsvPath = 'output.csv'
 const token = process.env.TOKEN
@@ -20,15 +20,17 @@ const csvWriter = createCsvWriter({
   path: outputCsvPath,
   header: [
     { id: 'type', title: 'type' },
+    { id: 'verify', title: 'verify' },
     { id: 'eventTime', title: 'eventTime' },
     { id: 'userId', title: 'userId' }
   ],
 })
 
-async function writer(type,time,user){
+async function writer(type,verify,time,user){
   const record = [
     {
       type: type,
+      verify: verify,
       eventTime: time,
       userId: user
     }
@@ -51,7 +53,7 @@ async function getLogs() {
           for(const item of jsonData.data){
               if(activityTypes.includes(item.type)){
                 //change writer arguments to match csvWriter L18
-                  await writer(item.type, item.event_at, item.user_id)
+                  await writer(item.type, item.user_id, item.event_at, item.metadata)
           }
           appendUrl = jsonData.metadata.next_page
       }
