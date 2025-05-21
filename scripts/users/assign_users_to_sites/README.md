@@ -19,7 +19,7 @@ TOKEN=5b1d73376dhy2a92960a0171b...
 Create a `input.csv` in the directory of this script, ensuring there is a `userId` and `siteId` column.
 
 ```csv
-userId,groupId
+userId,siteId
 data,data
 data,data
 ```

@@ -58,5 +58,7 @@ async function addUser(user,site) {
 };
 
 for(const user of usersProc) {
-  await addUser(user.userId,user.siteId)
+  if(user.siteId !== 'no_site'){
+    await addUser(user.userId,user.siteId)
+  }
 };
