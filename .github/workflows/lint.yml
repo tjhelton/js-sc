@@ -1,9 +1,12 @@
 name: lint
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
-      - main  # Specify the branches you want to trigger the workflow on
+      - main
 
 jobs:
   lint:
