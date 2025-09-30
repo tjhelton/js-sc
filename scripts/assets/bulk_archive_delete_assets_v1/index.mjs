@@ -4,7 +4,8 @@ import dotenv from 'dotenv';
 import { createObjectCsvWriter as createCsvWriter } from 'csv-writer';
 dotenv.config()
 
-const token = process.env.TOKEN
+// API Token - Replace 'YOUR_API_TOKEN_HERE' with your actual token, or use .env file with TOKEN variable
+const token = process.env.TOKEN || 'YOUR_API_TOKEN_HERE'
 
 const assets = await fs.readFile('input.csv','utf8')
 const assetCsv = await neatCsv(assets)

@@ -6,7 +6,8 @@ dotenv.config()
 const activityTypes = ['org.users_added', 'org.update_user_seat_type']
 
 const outputCsvPath = 'output.csv'
-const token = process.env.TOKEN
+// API Token - Replace 'YOUR_API_TOKEN_HERE' with your actual token, or use .env file with TOKEN variable
+const token = process.env.TOKEN || 'YOUR_API_TOKEN_HERE'
 const url = 'https://api.safetyculture.io'
 const options = {
     method: 'GET',
