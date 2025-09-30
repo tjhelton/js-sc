@@ -2,7 +2,7 @@
 
 The purpose of this script is to create schedule items in bulk. Special care should be taken when editing the payload for these API calls, as the Start Date, Duration, Starting Day, and more can impact how these schedules are created.
 
-## Set up
+## Set up:
 
 Ensure dependencies are installed by running the below command in the directory of the script:
 ```bash
@@ -10,11 +10,14 @@ npm i
 ```
 
 Create a .env file with `TOKEN` and `USERID` parameters as follows:
+
 ```bash
 TOKEN=35db5156cea46ed...
 
 USERID=user_...
 ```
+
+Alternatively, you can hardcode your API token directly in the `index.mjs` file by replacing `'YOUR_API_TOKEN_HERE'` in the token variable.
 
 Use the SafetyCulture Exporter to write schedule data to a database. At the time of this scripts writing, SafetyCulture Exporter CLI `v4.19.2` was used to export to a local Postgres SQL database. Please see the `safetyculture-exporter.yaml` in this repo for the exact export settings needed.
 
@@ -75,7 +78,7 @@ Note that `duration` is blank in this script and must be either hard-coded or an
       }
 ```
 
-## Running the script
+## Running the script:
 
 Once the set up is complete, run the following command in a terminal:
 `node index.mjs`
