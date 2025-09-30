@@ -2,7 +2,7 @@
 
 The purpose of this script is to update schedule items in bulk. Special care should be taken when editing the payload for these API calls, as the Start Date, Duration, Starting Day, and more can impact how these schedules update.
 
-## Set up
+## Set up:
 
 Ensure dependencies are installed by running the below command in the directory of the script:
 ```bash
@@ -10,9 +10,12 @@ npm i
 ```
 
 Create a .env file with a `TOKEN` parameter as follows:
+
 ```bash
 TOKEN=5b1d73376dhy2a92960a0171b...
 ```
+
+Alternatively, you can hardcode your API token directly in the `index.mjs` file by replacing `'YOUR_API_TOKEN_HERE'` in the token variable.
 
 Use the SafetyCulture Exporter to write schedule data to a database. At the time of this scripts writing, SafetyCulture Exporter CLI `v4.19.2` was used to export to a local Postgres SQL database. Please see the `safetyculture-exporter.yaml` in this repo for the exact export settings needed.
 
@@ -70,12 +73,12 @@ Prior to running the script, edit the payload as needed for the use case in `ind
 ```
 
 
-## Running the script
+## Running the script:
 
 Once the set up is complete, run the following command in a terminal:
 `node index.mjs`
 
-## Outputs
+## Outputs:
 
 This script generates an `output.csv` with the ids and status of the deletions.
 

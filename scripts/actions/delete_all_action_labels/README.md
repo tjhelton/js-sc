@@ -16,6 +16,8 @@ Create a .env file with a `TOKEN` parameter as follows:
 TOKEN=5b1d73376dhy2a92960a0171b...
 ```
 
+Alternatively, you can hardcode your API token directly in the `index.mjs` file by replacing `'YOUR_API_TOKEN_HERE'` in the token variable.
+
 This script requires no further setup.
 
 ## Running the script:

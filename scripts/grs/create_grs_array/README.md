@@ -18,6 +18,8 @@ TOKEN=5b1d73376dhy2a92960a0171b...
 GRS='responseset_024d2d482b7c41d2ba4c343b444981a9'
 ```
 
+Alternatively, you can hardcode your API token directly in the `index.mjs` file by replacing `'YOUR_API_TOKEN_HERE'` in the token variable.
+
 ## Running the script:
 
 Once the set up is complete, run the following command in a terminal:
